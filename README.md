@@ -4,6 +4,8 @@
 
 </div>
 
+- 	Note: [Formatting](#format-code) the Code before Pushing is Important!!
+
 ## Steps
 
 ### Clone the Repository
@@ -35,6 +37,15 @@ Open a terminal in the Directory. Now type:
 RUN("example.jonak")
 ```
 and hit Enter.
+
+## Format Code
+In a terminal, type
+```bash
+.\venv\Scripts\activate
+black .
+deactivate
+```
+and press Enter.
 
 ## Contributors
 <a href = "https://github.com/Jonak-Adipta-Kalita/JAK-Programming-Language/graphs/contributors">

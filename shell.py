@@ -3,8 +3,9 @@ import basic
 while True:
     print()
     text = input("JAK_Programming_Language> ")
-    if text.strip() == "": continue
-    result, error = basic.run('<stdin>', text)
+    if text.strip() == "":
+        continue
+    result, error = basic.run("<stdin>", text)
     if error:
         print(error.as_string())
     elif result:
