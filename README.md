@@ -1,6 +1,7 @@
 <div align=center>
 
 # JAK-Programming-Language
+[![Code Style: Black](https://img.shields.io/badge/Code%20Style-Black-000000.svg?style=for-the-badge)](https://github.com/psf/black)
 
 </div>
 
