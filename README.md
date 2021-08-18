@@ -48,6 +48,10 @@ deactivate
 ```
 and press Enter.
 
+## Technology(s) Used
+
+-   Language: [Python](https://python.org/)
+
 ## Contributors
 <a href = "https://github.com/Jonak-Adipta-Kalita/JAK-Programming-Language/graphs/contributors">
 	<img src = "https://contrib.rocks/image?repo=Jonak-Adipta-Kalita/JAK-Programming-Language"/>
