@@ -9,5 +9,5 @@ pathspec==0.8.1
 regex==2021.7.6
 toml==0.10.2
 typed-ast==1.4.3
-typing-extensions==3.10.0.0
+typing-extensions==3.10.0.2
 zipp==3.5.0
