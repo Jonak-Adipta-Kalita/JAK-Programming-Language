@@ -1,5 +1,5 @@
 appdirs==1.4.4
-black==21.6b0
+black==21.9b0
 click==8.0.1
 colorama==0.4.4
 importlib-metadata==4.8.1
