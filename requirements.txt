@@ -10,4 +10,4 @@ regex==2021.9.24
 toml==0.10.2
 typed-ast==1.4.3
 typing-extensions==3.10.0.2
-zipp==3.5.0
+zipp==3.5.1
