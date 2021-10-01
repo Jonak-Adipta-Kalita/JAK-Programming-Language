@@ -2,7 +2,7 @@
 # IMPORTS
 #######################################
 
-from strings_with_arrows import *
+import src.strings_with_arrows as swa
 
 import string
 import os
@@ -31,7 +31,7 @@ class Error:
     def as_string(self):
         result = f"{self.error_name}: {self.details}\n"
         result += f"File {self.pos_start.fn}, line {self.pos_start.ln + 1}"
-        result += "\n\n" + string_with_arrows(
+        result += "\n\n" + swa.string_with_arrows(
             self.pos_start.ftxt, self.pos_start, self.pos_end
         )
         return result
@@ -60,7 +60,7 @@ class RTError(Error):
     def as_string(self):
         result = self.generate_traceback()
         result += f"{self.error_name}: {self.details}"
-        result += "\n\n" + string_with_arrows(
+        result += "\n\n" + swa.string_with_arrows(
             self.pos_start.ftxt, self.pos_start, self.pos_end
         )
         return result

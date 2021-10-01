@@ -33,7 +33,7 @@ and hit Enter.
 ### Starting the Language
 Open a terminal in the Directory. Now type:
 ```bash
-python shell.py
+python main.py
 ```
 and hit Enter. This will start the Language
 
