@@ -70,7 +70,9 @@ class Value:
     def illegal_operation(self, other=None):
         if not other:
             other = self
-        return errors.RTError(self.pos_start, other.pos_end, "Illegal operation", self.context)
+        return errors.RTError(
+            self.pos_start, other.pos_end, "Illegal operation", self.context
+        )
 
 
 class Number(Value):
