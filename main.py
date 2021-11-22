@@ -16,5 +16,7 @@ while True:
             else:
                 print(repr(result))
         print()
-    except KeyboardInterrupt as e:
+    except Exception as e:
+        print(f"Exception: {e}")
+    except KeyboardInterrupt:
         break
