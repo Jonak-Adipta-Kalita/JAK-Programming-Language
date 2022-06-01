@@ -1,6 +1,6 @@
 SOURCES = $(shell find ast kaleidoscope lexer logger parser -name '*.cpp')
 HEADERS = $(shell find ast kaleidoscope lexer logger parser -name '*.h')
-LLVM_PATH = F:/DEKSTOP/LLVM/4.0.1
+LLVM_PATH = F:/DEKSTOP/llvm/4.0.1
 OBJ = ${SOURCES:.cpp=.o}
 
 CC = llvm-g++
