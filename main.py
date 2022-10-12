@@ -1,9 +1,9 @@
 import sys
 import src.basic as basic
 
-if sys.argv:
+try:
     file_name = sys.argv[1]
-    result, error = basic.run("<stdin>", f"RUN(\"{file_name}\")")
+    result, error = basic.run("<stdin>", f'RUN("{file_name}")')
     if error:
         print(error.as_string())
     elif result:
@@ -12,7 +12,7 @@ if sys.argv:
         else:
             print(repr(result))
     print()
-else:
+except IndexError:
     while True:
         try:
             text = input("JAK_Programming_Language>>> ")

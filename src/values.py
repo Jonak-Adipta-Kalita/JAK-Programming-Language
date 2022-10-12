@@ -111,7 +111,7 @@ class Number(Value):
 
     def powed_by(self, other):
         if isinstance(other, Number):
-            return Number(self.value ** other.value).set_context(self.context), None
+            return Number(self.value**other.value).set_context(self.context), None
         else:
             return None, Value.illegal_operation(self, other)
 
