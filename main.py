@@ -15,7 +15,7 @@ try:
 except IndexError:
     while True:
         try:
-            text = input("JAK_Programming_Language>>> ")
+            text = input(">>> ")
             if text == "exit()":
                 break
             if text.strip() == "":
