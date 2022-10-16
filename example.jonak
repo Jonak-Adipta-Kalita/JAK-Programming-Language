@@ -1,7 +1,4 @@
-FUN msg_contain(hello_msg, world_msg)
-	VAR real_msg = hello_msg + ", " + world_msg + "!"
-	RETURN real_msg
-END
+FUN msg_contain(hello_msg, world_msg) -> hello_msg + ", " + world_msg + "!"
 
 VAR hello = "Hello"
 VAR world = "World"
