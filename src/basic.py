@@ -62,14 +62,14 @@ class BuiltInFunction(BaseFunction):
     execute_print_ret.arg_names = ["value"]
 
     def execute_input(self, exec_ctx):
-        text = input()
+        text = input(str(exec_ctx.symbol_table.get("value")))
         return RTResult().success(String(text))
 
-    execute_input.arg_names = []
+    execute_input.arg_names = ["value"]
 
     def execute_input_int(self, exec_ctx):
         while True:
-            text = input()
+            text = input(str(exec_ctx.symbol_table.get("value")))
             try:
                 number = int(text)
                 break
@@ -77,7 +77,7 @@ class BuiltInFunction(BaseFunction):
                 print(f"'{text}' must be an integer. Try again!")
         return RTResult().success(Number(number))
 
-    execute_input_int.arg_names = []
+    execute_input_int.arg_names = ["value"]
 
     def execute_clear(self, exec_ctx):
         os.system("cls" if os.name == "nt" else "cls")
