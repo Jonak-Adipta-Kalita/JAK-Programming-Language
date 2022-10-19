@@ -17,6 +17,7 @@ from src.nodes import (
     VarAssignNode,
 )
 from src.variables import (
+    DIGITS,
     TT_ARROW,
     TT_COMMA,
     TT_DIV,
@@ -356,6 +357,35 @@ class Parser:
         elif tok.type == TT_IDENTIFIER:
             res.register_advancement()
             self.advance()
+
+            if self.current_tok.type == TT_LSQUARE:
+                res.register_advancement()
+                self.advance()
+
+                if self.current_tok.type == TT_INT:
+                    res.register_advancement()
+                    self.advance()
+
+                    if self.current_tok.type == TT_RSQUARE:
+                        res.register_advancement()
+                        self.advance()
+
+                        if self.current_tok.type == TT_EQ:
+                            res.register_advancement()
+                            self.advance()
+
+                            if self.current_tok.type in [
+                                TT_IDENTIFIER,
+                                TT_INT,
+                                TT_STRING,
+                            ]:
+                                modify_list_expr = res.register(self.modify_list_expr())
+
+                                if res.error:
+                                    return res
+
+                                return res.success(modify_list_expr)
+
             return res.success(VarAccessNode(tok))
 
         elif tok.type == TT_LPAREN:
@@ -469,6 +499,11 @@ class Parser:
         return res.success(
             ListNode(element_nodes, pos_start, self.current_tok.pos_end.copy())
         )
+
+    def modify_list_expr(self):
+        res = ParseResult()
+
+        return res
 
     def if_expr(self):
         res = ParseResult()
