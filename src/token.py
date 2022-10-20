@@ -2,7 +2,13 @@ from src.position import Position
 
 
 class Token:
-    def __init__(self, type_: str, value: str=None, pos_start: Position=None, pos_end: Position=None):
+    def __init__(
+        self,
+        type_: str,
+        value: str = None,
+        pos_start: Position = None,
+        pos_end: Position = None,
+    ):
         self.type: str = type_
         self.value: str = value
 

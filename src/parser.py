@@ -379,7 +379,9 @@ class Parser:
                                 TT_INT,
                                 TT_STRING,
                             ]:
-                                modify_list_expr = res.register(self.modify_list_expr(tok))
+                                modify_list_expr = res.register(
+                                    self.modify_list_expr(tok)
+                                )
 
                                 if res.error:
                                     return res

@@ -4,7 +4,9 @@ from src.functions import string_with_arrows
 
 
 class Error:
-    def __init__(self, pos_start: Position, pos_end: Position, error_name: str, details: str):
+    def __init__(
+        self, pos_start: Position, pos_end: Position, error_name: str, details: str
+    ):
         self.pos_start: Position = pos_start
         self.pos_end: Position = pos_end
         self.error_name: str = error_name
@@ -30,12 +32,14 @@ class ExpectedCharError(Error):
 
 
 class InvalidSyntaxError(Error):
-    def __init__(self, pos_start: Position, pos_end: Position, details: str=""):
+    def __init__(self, pos_start: Position, pos_end: Position, details: str = ""):
         super().__init__(pos_start, pos_end, "Invalid Syntax", details)
 
 
 class RTError(Error):
-    def __init__(self, pos_start: Position, pos_end: Position, details: str, context: Context):
+    def __init__(
+        self, pos_start: Position, pos_end: Position, details: str, context: Context
+    ):
         super().__init__(pos_start, pos_end, "Runtime Error", details)
         self.context = context
 
