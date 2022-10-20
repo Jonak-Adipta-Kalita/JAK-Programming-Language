@@ -35,10 +35,10 @@ from src.variables import (
 
 
 class Lexer:
-    def __init__(self, fn, text):
-        self.fn = fn
-        self.text = text
-        self.pos = Position(-1, 0, -1, fn, text)
+    def __init__(self, fn: str, text: str):
+        self.fn: str = fn
+        self.text: str = text
+        self.pos: Position = Position(-1, 0, -1, fn, text)
         self.current_char = None
         self.advance()
 

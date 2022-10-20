@@ -1,5 +1,9 @@
+from src.position import Position
+from src.token import Token
+
+
 class NumberNode:
-    def __init__(self, tok):
+    def __init__(self, tok: Token):
         self.tok = tok
 
         self.pos_start = self.tok.pos_start
@@ -10,7 +14,7 @@ class NumberNode:
 
 
 class StringNode:
-    def __init__(self, tok):
+    def __init__(self, tok: Token):
         self.tok = tok
 
         self.pos_start = self.tok.pos_start
@@ -21,7 +25,7 @@ class StringNode:
 
 
 class ListNode:
-    def __init__(self, element_nodes, pos_start, pos_end):
+    def __init__(self, element_nodes: list, pos_start: Position, pos_end: Position):
         self.element_nodes = element_nodes
 
         self.pos_start = pos_start
@@ -29,7 +33,7 @@ class ListNode:
 
 
 class VarAccessNode:
-    def __init__(self, var_name_tok):
+    def __init__(self, var_name_tok: Token):
         self.var_name_tok = var_name_tok
 
         self.pos_start = self.var_name_tok.pos_start
@@ -37,7 +41,7 @@ class VarAccessNode:
 
 
 class VarAssignNode:
-    def __init__(self, var_name_tok, value_node):
+    def __init__(self, var_name_tok: Token, value_node):
         self.var_name_tok = var_name_tok
         self.value_node = value_node
 
@@ -46,7 +50,7 @@ class VarAssignNode:
 
 
 class BinOpNode:
-    def __init__(self, left_node, op_tok, right_node):
+    def __init__(self, left_node, op_tok: Token, right_node):
         self.left_node = left_node
         self.op_tok = op_tok
         self.right_node = right_node
@@ -59,7 +63,7 @@ class BinOpNode:
 
 
 class UnaryOpNode:
-    def __init__(self, op_tok, node):
+    def __init__(self, op_tok: Token, node):
         self.op_tok = op_tok
         self.node = node
 
@@ -71,7 +75,7 @@ class UnaryOpNode:
 
 
 class IfNode:
-    def __init__(self, cases, else_case):
+    def __init__(self, cases: list, else_case: tuple):
         self.cases = cases
         self.else_case = else_case
 
@@ -82,12 +86,12 @@ class IfNode:
 class ForNode:
     def __init__(
         self,
-        var_name_tok,
+        var_name_tok: Token,
         start_value_node,
         end_value_node,
         step_value_node,
         body_node,
-        should_return_null,
+        should_return_null: bool,
     ):
         self.var_name_tok = var_name_tok
         self.start_value_node = start_value_node
@@ -101,7 +105,7 @@ class ForNode:
 
 
 class WhileNode:
-    def __init__(self, condition_node, body_node, should_return_null):
+    def __init__(self, condition_node, body_node, should_return_null: bool):
         self.condition_node = condition_node
         self.body_node = body_node
         self.should_return_null = should_return_null
@@ -111,7 +115,7 @@ class WhileNode:
 
 
 class FuncDefNode:
-    def __init__(self, var_name_tok, arg_name_toks, body_node, should_auto_return):
+    def __init__(self, var_name_tok: Token, arg_name_toks: list, body_node, should_auto_return: bool):
         self.var_name_tok = var_name_tok
         self.arg_name_toks = arg_name_toks
         self.body_node = body_node
@@ -128,20 +132,20 @@ class FuncDefNode:
 
 
 class CallNode:
-    def __init__(self, node_to_call, arg_nodes):
+    def __init__(self, node_to_call, arg_nodes: list):
         self.node_to_call = node_to_call
         self.arg_nodes = arg_nodes
 
-        self.pos_start = self.node_to_call.pos_start
+        self.pos_start: Position = self.node_to_call.pos_start
 
         if len(self.arg_nodes) > 0:
-            self.pos_end = self.arg_nodes[len(self.arg_nodes) - 1].pos_end
+            self.pos_end: Position = self.arg_nodes[len(self.arg_nodes) - 1].pos_end
         else:
-            self.pos_end = self.node_to_call.pos_end
+            self.pos_end: Position = self.node_to_call.pos_end
 
 
 class ReturnNode:
-    def __init__(self, node_to_return, pos_start, pos_end):
+    def __init__(self, node_to_return, pos_start: Position, pos_end: Position):
         self.node_to_return = node_to_return
 
         self.pos_start = pos_start
@@ -149,12 +153,12 @@ class ReturnNode:
 
 
 class ContinueNode:
-    def __init__(self, pos_start, pos_end):
+    def __init__(self, pos_start: Position, pos_end: Position):
         self.pos_start = pos_start
         self.pos_end = pos_end
 
 
 class BreakNode:
-    def __init__(self, pos_start, pos_end):
+    def __init__(self, pos_start: Position, pos_end: Position):
         self.pos_start = pos_start
         self.pos_end = pos_end
