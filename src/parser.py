@@ -359,37 +359,6 @@ class Parser:
         elif tok.type == TT_IDENTIFIER:
             res.register_advancement()
             self.advance()
-
-            if self.current_tok.type == TT_LSQUARE:
-                res.register_advancement()
-                self.advance()
-
-                if self.current_tok.type == TT_INT:
-                    res.register_advancement()
-                    self.advance()
-
-                    if self.current_tok.type == TT_RSQUARE:
-                        res.register_advancement()
-                        self.advance()
-
-                        if self.current_tok.type == TT_EQ:
-                            res.register_advancement()
-                            self.advance()
-
-                            if self.current_tok.type in [
-                                TT_IDENTIFIER,
-                                TT_INT,
-                                TT_STRING,
-                            ]:
-                                modify_list_expr = res.register(
-                                    self.modify_list_expr(tok)
-                                )
-
-                                if res.error:
-                                    return res
-
-                                return res.success(modify_list_expr)
-
             return res.success(VarAccessNode(tok))
 
         elif tok.type == TT_LPAREN:
@@ -503,11 +472,6 @@ class Parser:
         return res.success(
             ListNode(element_nodes, pos_start, self.current_tok.pos_end.copy())
         )
-
-    def modify_list_expr(self, var_name_tok: Token):
-        res = ParseResult()
-
-        return res.success(VarAccessNode(var_name_tok))
 
     def if_expr(self):
         res = ParseResult()
@@ -937,7 +901,9 @@ class Parser:
 
     ###################################
 
-    def bin_op(self, func_a: typing.Callable, ops: tuple, func_b: typing.Callable=None):
+    def bin_op(
+        self, func_a: typing.Callable, ops: tuple, func_b: typing.Callable = None
+    ):
         if func_b == None:
             func_b = func_a
 

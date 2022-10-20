@@ -55,7 +55,7 @@ class Interpreter:
         )
 
     def visit_StringNode(self, node: StringNode, context: Context):
-        return src.runtime_result. RTResult().success(
+        return src.runtime_result.RTResult().success(
             String(node.tok.value)
             .set_context(context)
             .set_pos(node.pos_start, node.pos_end)
