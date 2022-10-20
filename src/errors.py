@@ -1,12 +1,14 @@
+from src.context import Context
+from src.position import Position
 from src.functions import string_with_arrows
 
 
 class Error:
-    def __init__(self, pos_start, pos_end, error_name, details):
-        self.pos_start = pos_start
-        self.pos_end = pos_end
-        self.error_name = error_name
-        self.details = details
+    def __init__(self, pos_start: Position, pos_end: Position, error_name: str, details: str):
+        self.pos_start: Position = pos_start
+        self.pos_end: Position = pos_end
+        self.error_name: str = error_name
+        self.details: str = details
 
     def as_string(self):
         result = f"{self.error_name}: {self.details}\n"
@@ -18,22 +20,22 @@ class Error:
 
 
 class IllegalCharError(Error):
-    def __init__(self, pos_start, pos_end, details):
+    def __init__(self, pos_start: Position, pos_end: Position, details: str):
         super().__init__(pos_start, pos_end, "Illegal Character", details)
 
 
 class ExpectedCharError(Error):
-    def __init__(self, pos_start, pos_end, details):
+    def __init__(self, pos_start: Position, pos_end: Position, details: str):
         super().__init__(pos_start, pos_end, "Expected Character", details)
 
 
 class InvalidSyntaxError(Error):
-    def __init__(self, pos_start, pos_end, details=""):
+    def __init__(self, pos_start: Position, pos_end: Position, details: str=""):
         super().__init__(pos_start, pos_end, "Invalid Syntax", details)
 
 
 class RTError(Error):
-    def __init__(self, pos_start, pos_end, details, context):
+    def __init__(self, pos_start: Position, pos_end: Position, details: str, context: Context):
         super().__init__(pos_start, pos_end, "Runtime Error", details)
         self.context = context
 

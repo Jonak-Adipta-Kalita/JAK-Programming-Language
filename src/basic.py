@@ -36,7 +36,7 @@ class BuiltInFunction(BaseFunction):
             return res
         return res.success(return_value)
 
-    def no_visit_method(self, node, context):
+    def no_visit_method(self, node, context: Context):
         raise Exception(f"No execute_{self.name} method defined")
 
     def copy(self):
@@ -50,24 +50,24 @@ class BuiltInFunction(BaseFunction):
 
     #####################################
 
-    def execute_print(self, exec_ctx):
+    def execute_print(self, exec_ctx: Context):
         print(str(exec_ctx.symbol_table.get("value")))
         return RTResult().success(Number.null)
 
     execute_print.arg_names = ["value"]
 
-    def execute_print_ret(self, exec_ctx):
+    def execute_print_ret(self, exec_ctx: Context):
         return RTResult().success(String(str(exec_ctx.symbol_table.get("value"))))
 
     execute_print_ret.arg_names = ["value"]
 
-    def execute_input(self, exec_ctx):
+    def execute_input(self, exec_ctx: Context):
         text = input(str(exec_ctx.symbol_table.get("value")))
         return RTResult().success(String(text))
 
     execute_input.arg_names = ["value"]
 
-    def execute_input_int(self, exec_ctx):
+    def execute_input_int(self, exec_ctx: Context):
         while True:
             text = input(str(exec_ctx.symbol_table.get("value")))
             try:
@@ -79,37 +79,37 @@ class BuiltInFunction(BaseFunction):
 
     execute_input_int.arg_names = ["value"]
 
-    def execute_clear(self, exec_ctx):
+    def execute_clear(self, exec_ctx: Context):
         os.system("cls" if os.name == "nt" else "cls")
         return RTResult().success(Number.null)
 
     execute_clear.arg_names = []
 
-    def execute_is_number(self, exec_ctx):
+    def execute_is_number(self, exec_ctx: Context):
         is_number = isinstance(exec_ctx.symbol_table.get("value"), Number)
         return RTResult().success(Number.true if is_number else Number.false)
 
     execute_is_number.arg_names = ["value"]
 
-    def execute_is_string(self, exec_ctx):
+    def execute_is_string(self, exec_ctx: Context):
         is_number = isinstance(exec_ctx.symbol_table.get("value"), String)
         return RTResult().success(Number.true if is_number else Number.false)
 
     execute_is_string.arg_names = ["value"]
 
-    def execute_is_list(self, exec_ctx):
+    def execute_is_list(self, exec_ctx: Context):
         is_number = isinstance(exec_ctx.symbol_table.get("value"), List)
         return RTResult().success(Number.true if is_number else Number.false)
 
     execute_is_list.arg_names = ["value"]
 
-    def execute_is_function(self, exec_ctx):
+    def execute_is_function(self, exec_ctx: Context):
         is_number = isinstance(exec_ctx.symbol_table.get("value"), BaseFunction)
         return RTResult().success(Number.true if is_number else Number.false)
 
     execute_is_function.arg_names = ["value"]
 
-    def execute_append(self, exec_ctx):
+    def execute_append(self, exec_ctx: Context):
         list_ = exec_ctx.symbol_table.get("list")
         value = exec_ctx.symbol_table.get("value")
 
@@ -128,7 +128,7 @@ class BuiltInFunction(BaseFunction):
 
     execute_append.arg_names = ["list", "value"]
 
-    def execute_pop(self, exec_ctx):
+    def execute_pop(self, exec_ctx: Context):
         list_ = exec_ctx.symbol_table.get("list")
         index = exec_ctx.symbol_table.get("index")
 
@@ -167,7 +167,7 @@ class BuiltInFunction(BaseFunction):
 
     execute_pop.arg_names = ["list", "index"]
 
-    def execute_extend(self, exec_ctx):
+    def execute_extend(self, exec_ctx: Context):
         listA = exec_ctx.symbol_table.get("listA")
         listB = exec_ctx.symbol_table.get("listB")
 
@@ -196,7 +196,7 @@ class BuiltInFunction(BaseFunction):
 
     execute_extend.arg_names = ["listA", "listB"]
 
-    def execute_len(self, exec_ctx):
+    def execute_len(self, exec_ctx: Context):
         list_ = exec_ctx.symbol_table.get("list")
 
         if not isinstance(list_, List):
@@ -208,7 +208,7 @@ class BuiltInFunction(BaseFunction):
 
     execute_len.arg_names = ["list"]
 
-    def execute_run(self, exec_ctx):
+    def execute_run(self, exec_ctx: Context):
         fn = exec_ctx.symbol_table.get("fn")
 
         if not isinstance(fn, String):

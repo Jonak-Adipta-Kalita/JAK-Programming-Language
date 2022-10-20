@@ -1,3 +1,5 @@
+from src.context import Context
+from src.position import Position
 from src.runtime_result import RTResult
 import src.errors as errors
 
@@ -7,13 +9,13 @@ class Value:
         self.set_pos()
         self.set_context()
 
-    def set_pos(self, pos_start=None, pos_end=None):
-        self.pos_start = pos_start
-        self.pos_end = pos_end
+    def set_pos(self, pos_start: Position=None, pos_end: Position=None):
+        self.pos_start: Position = pos_start
+        self.pos_end: Position = pos_end
         return self
 
-    def set_context(self, context=None):
-        self.context = context
+    def set_context(self, context: Context=None):
+        self.context: Context = context
         return self
 
     def added_to(self, other):

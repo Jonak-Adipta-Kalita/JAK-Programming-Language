@@ -17,7 +17,6 @@ from src.nodes import (
     VarAssignNode,
 )
 from src.variables import (
-    DIGITS,
     TT_ARROW,
     TT_COMMA,
     TT_DIV,
@@ -44,6 +43,7 @@ from src.variables import (
     TT_RSQUARE,
     TT_STRING,
 )
+from src.token import Token
 
 
 class ParseResult:
@@ -99,7 +99,7 @@ class Parser:
 
     def update_current_tok(self):
         if self.tok_idx >= 0 and self.tok_idx < len(self.tokens):
-            self.current_tok = self.tokens[self.tok_idx]
+            self.current_tok: Token = self.tokens[self.tok_idx]
 
     def parse(self):
         res = self.statements()
@@ -379,7 +379,7 @@ class Parser:
                                 TT_INT,
                                 TT_STRING,
                             ]:
-                                modify_list_expr = res.register(self.modify_list_expr())
+                                modify_list_expr = res.register(self.modify_list_expr(tok))
 
                                 if res.error:
                                     return res
@@ -500,10 +500,10 @@ class Parser:
             ListNode(element_nodes, pos_start, self.current_tok.pos_end.copy())
         )
 
-    def modify_list_expr(self):
+    def modify_list_expr(self, var_name_tok):
         res = ParseResult()
 
-        return res
+        return res.success(VarAccessNode(var_name_tok))
 
     def if_expr(self):
         res = ParseResult()
