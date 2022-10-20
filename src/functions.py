@@ -1,5 +1,5 @@
 from src.position import Position
-from src.runtime_result import RTResult
+import src.runtime_result
 import src.errors as errors
 from src.values import Value, Number
 from src.context import Context
@@ -48,7 +48,7 @@ class BaseFunction(Value):
         return new_context
 
     def check_args(self, arg_names: list, args: list):
-        res = RTResult()
+        res = src.runtime_result.RTResult()
 
         if len(args) > len(arg_names):
             return res.failure(
@@ -80,7 +80,7 @@ class BaseFunction(Value):
             exec_ctx.symbol_table.set(arg_name, arg_value)
 
     def check_and_populate_args(self, arg_names: list, args: list, exec_ctx: Context):
-        res = RTResult()
+        res = src.runtime_result.RTResult()
         res.register(self.check_args(arg_names, args))
         if res.should_return():
             return res
@@ -96,7 +96,7 @@ class Function(BaseFunction):
         self.should_auto_return: bool = should_auto_return
 
     def execute(self, args: list):
-        res = RTResult()
+        res = src.runtime_result.RTResult()
         interpreter = Interpreter()
         exec_ctx = self.generate_new_context()
 

@@ -1,6 +1,6 @@
 from src.context import Context
 from src.position import Position
-from src.runtime_result import RTResult
+import src.runtime_result
 import src.errors as errors
 
 
@@ -61,7 +61,7 @@ class Value:
         return None, self.illegal_operation(other)
 
     def execute(self, args):
-        return RTResult().failure(self.illegal_operation())
+        return src.runtime_result.RTResult().failure(self.illegal_operation())
 
     def copy(self):
         raise Exception("No copy method defined")

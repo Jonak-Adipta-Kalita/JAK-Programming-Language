@@ -1,5 +1,13 @@
+import src.errors
+
+
 class RTResult:
     def __init__(self):
+        self.value = None
+        self.error: src.errors.RTError = None
+        self.func_return_value = None
+        self.loop_should_continue: bool = False
+        self.loop_should_break: bool = False
         self.reset()
 
     def reset(self):
@@ -10,7 +18,7 @@ class RTResult:
         self.loop_should_break = False
 
     def register(self, res):
-        self.error = res.error
+        self.error: src.errors.RTError = res.error
         self.func_return_value = res.func_return_value
         self.loop_should_continue = res.loop_should_continue
         self.loop_should_break = res.loop_should_break
@@ -36,12 +44,12 @@ class RTResult:
         self.loop_should_break = True
         return self
 
-    def failure(self, error):
+    def failure(self, error: src.errors.RTError):
         self.reset()
         self.error = error
         return self
 
-    def should_return(self):
+    def should_return(self) -> bool:
         # Note: this will allow you to continue and break outside the current function
         return (
             self.error

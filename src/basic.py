@@ -17,10 +17,10 @@ Number.math_PI = Number(math.pi)
 
 
 class BuiltInFunction(BaseFunction):
-    def __init__(self, name):
+    def __init__(self, name: str):
         super().__init__(name)
 
-    def execute(self, args):
+    def execute(self, args: list):
         res = RTResult()
         exec_ctx = self.generate_new_context()
 

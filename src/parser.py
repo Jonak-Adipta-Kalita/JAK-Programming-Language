@@ -1,4 +1,6 @@
-from src.errors import InvalidSyntaxError
+import typing
+from src.runtime_result import RTResult
+from src.errors import InvalidSyntaxError, RTError
 from src.nodes import (
     NumberNode,
     StringNode,
@@ -48,24 +50,24 @@ from src.token import Token
 
 class ParseResult:
     def __init__(self):
-        self.error = None
+        self.error: RTError = None
         self.node = None
-        self.last_registered_advance_count = 0
-        self.advance_count = 0
-        self.to_reverse_count = 0
+        self.last_registered_advance_count: int = 0
+        self.advance_count: int = 0
+        self.to_reverse_count: int = 0
 
     def register_advancement(self):
         self.last_registered_advance_count = 1
         self.advance_count += 1
 
-    def register(self, res):
+    def register(self, res: RTResult):
         self.last_registered_advance_count = res.advance_count
         self.advance_count += res.advance_count
         if res.error:
             self.error = res.error
         return res.node
 
-    def try_register(self, res):
+    def try_register(self, res: RTResult):
         if res.error:
             self.to_reverse_count = res.advance_count
             return None
@@ -75,14 +77,14 @@ class ParseResult:
         self.node = node
         return self
 
-    def failure(self, error):
+    def failure(self, error: RTError):
         if not self.error or self.last_registered_advance_count == 0:
             self.error = error
         return self
 
 
 class Parser:
-    def __init__(self, tokens):
+    def __init__(self, tokens: typing.List[Token]):
         self.tokens = tokens
         self.tok_idx = -1
         self.advance()
@@ -502,7 +504,7 @@ class Parser:
             ListNode(element_nodes, pos_start, self.current_tok.pos_end.copy())
         )
 
-    def modify_list_expr(self, var_name_tok):
+    def modify_list_expr(self, var_name_tok: Token):
         res = ParseResult()
 
         return res.success(VarAccessNode(var_name_tok))
@@ -570,7 +572,7 @@ class Parser:
 
         return res.success((cases, else_case))
 
-    def if_expr_cases(self, case_keyword):
+    def if_expr_cases(self, case_keyword: str):
         res = ParseResult()
         cases = []
         else_case = None
@@ -935,7 +937,7 @@ class Parser:
 
     ###################################
 
-    def bin_op(self, func_a, ops, func_b=None):
+    def bin_op(self, func_a: typing.Callable, ops: tuple, func_b: typing.Callable=None):
         if func_b == None:
             func_b = func_a
 

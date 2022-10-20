@@ -16,7 +16,7 @@ from src.nodes import (
     WhileNode,
 )
 from src.context import Context
-from src.runtime_result import RTResult
+import src.runtime_result
 import src.errors as errors
 from src.values import String, List, Number
 import src.functions as funcs
@@ -48,21 +48,21 @@ class Interpreter:
     ###################################
 
     def visit_NumberNode(self, node: NumberNode, context: Context):
-        return RTResult().success(
+        return src.runtime_result.RTResult().success(
             Number(node.tok.value)
             .set_context(context)
             .set_pos(node.pos_start, node.pos_end)
         )
 
     def visit_StringNode(self, node: StringNode, context: Context):
-        return RTResult().success(
+        return src.runtime_result. RTResult().success(
             String(node.tok.value)
             .set_context(context)
             .set_pos(node.pos_start, node.pos_end)
         )
 
     def visit_ListNode(self, node: ListNode, context: Context):
-        res = RTResult()
+        res = src.runtime_result.RTResult()
         elements = []
 
         for element_node in node.element_nodes:
@@ -75,7 +75,7 @@ class Interpreter:
         )
 
     def visit_VarAccessNode(self, node: VarAccessNode, context: Context):
-        res = RTResult()
+        res = src.runtime_result.RTResult()
         var_name = node.var_name_tok.value
         value = context.symbol_table.get(var_name)
 
@@ -93,7 +93,7 @@ class Interpreter:
         return res.success(value)
 
     def visit_VarAssignNode(self, node: VarAssignNode, context: Context):
-        res = RTResult()
+        res = src.runtime_result.RTResult()
         var_name = node.var_name_tok.value
         value = res.register(self.visit(node.value_node, context))
         if res.should_return():
@@ -103,7 +103,7 @@ class Interpreter:
         return res.success(value)
 
     def visit_BinOpNode(self, node: BinOpNode, context: Context):
-        res = RTResult()
+        res = src.runtime_result.RTResult()
         left = res.register(self.visit(node.left_node, context))
         if res.should_return():
             return res
@@ -144,7 +144,7 @@ class Interpreter:
             return res.success(result.set_pos(node.pos_start, node.pos_end))
 
     def visit_UnaryOpNode(self, node: UnaryOpNode, context: Context):
-        res = RTResult()
+        res = src.runtime_result.RTResult()
         number = res.register(self.visit(node.node, context))
         if res.should_return():
             return res
@@ -162,7 +162,7 @@ class Interpreter:
             return res.success(number.set_pos(node.pos_start, node.pos_end))
 
     def visit_IfNode(self, node: IfNode, context: Context):
-        res = RTResult()
+        res = src.runtime_result.RTResult()
 
         for condition, expr, should_return_null in node.cases:
             condition_value = res.register(self.visit(condition, context))
@@ -185,7 +185,7 @@ class Interpreter:
         return res.success(Number.null)
 
     def visit_ForNode(self, node: ForNode, context: Context):
-        res = RTResult()
+        res = src.runtime_result.RTResult()
         elements = []
 
         start_value = res.register(self.visit(node.start_value_node, context))
@@ -239,7 +239,7 @@ class Interpreter:
         )
 
     def visit_WhileNode(self, node: WhileNode, context: Context):
-        res = RTResult()
+        res = src.runtime_result.RTResult()
         elements = []
 
         while True:
@@ -275,7 +275,7 @@ class Interpreter:
         )
 
     def visit_FuncDefNode(self, node: FuncDefNode, context: Context):
-        res = RTResult()
+        res = src.runtime_result.RTResult()
 
         func_name = node.var_name_tok.value if node.var_name_tok else None
         body_node = node.body_node
@@ -292,7 +292,7 @@ class Interpreter:
         return res.success(func_value)
 
     def visit_CallNode(self, node: CallNode, context: Context):
-        res = RTResult()
+        res = src.runtime_result.RTResult()
         args = []
 
         value_to_call = res.register(self.visit(node.node_to_call, context))
@@ -316,7 +316,7 @@ class Interpreter:
         return res.success(return_value)
 
     def visit_ReturnNode(self, node: ReturnNode, context: Context):
-        res = RTResult()
+        res = src.runtime_result.RTResult()
 
         if node.node_to_return:
             value = res.register(self.visit(node.node_to_return, context))
@@ -328,7 +328,7 @@ class Interpreter:
         return res.success_return(value)
 
     def visit_ContinueNode(self, node: ContinueNode, context: Context):
-        return RTResult().success_continue()
+        return src.runtime_result.RTResult().success_continue()
 
     def visit_BreakNode(self, node: BreakNode, context: Context):
-        return RTResult().success_break()
+        return src.runtime_result.RTResult().success_break()
