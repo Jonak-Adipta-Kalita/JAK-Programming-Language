@@ -4,7 +4,7 @@ click==8.0.3
 colorama==0.4.4
 importlib-metadata==4.8.2
 mypy-extensions==0.4.3
-Panda3D==1.10.10
+Panda3D==1.10.13.post1
 pathspec==0.9.0
 regex==2021.11.10
 toml==0.10.2
