@@ -1,19 +1,26 @@
 package main
 
-import "fmt"
+type Token int
 
-type Token struct {
-	Type  string
-	Value interface{}
+var tokens = []string{
+	TT_EOF:     "EOF",
+	TT_ILLEGAL: "ILLEGAL",
+	TT_INT:     "INT",
+	TT_FLOAT:   "FLOAT",
+	TT_STRING:  "STRING",
+	TT_BOOL:    "BOOL",
+	TT_PLUS:    "PLUS",
+	TT_MINUS:   "MINUS",
+	TT_MUL:     "MUL",
+	TT_DIV:     "DIV",
+	TT_POW:     "POW",
+	TT_ASSIGN:  "ASSIGN",
+	TT_LPAREN:  "LPAREN",
+	TT_RPAREN:  "RPAREN",
+	TT_LSQUARE: "LSQUARE",
+	TT_RSQUARE: "RSQUARE",
 }
 
-func NewToken(type_ string, value interface{}) *Token {
-	return &Token{Type: type_, Value: value}
-}
-
-func (t *Token) String() string {
-	if t.Value != nil {
-		return fmt.Sprintf("%v:%v", t.Type, t.Value)
-	}
-	return t.Type
+func (t Token) String() string {
+	return tokens[t]
 }
