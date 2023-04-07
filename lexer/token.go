@@ -13,13 +13,17 @@ const (
 	TT_POW
 	TT_ASSIGN
 	TT_KEYWORD
-	TT_IDENTIFIER
 	TT_INT
 	TT_STRING
 	TT_SEMICOLON
 	TT_LPAREN
 	TT_RPAREN
+	TT_NEWLINE
 )
+
+var KEYWORDS = []string{
+	"print",
+}
 
 type Token struct {
 	Value string
