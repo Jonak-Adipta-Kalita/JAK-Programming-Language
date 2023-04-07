@@ -7,7 +7,7 @@ import (
 )
 
 func TestNextToken(t *testing.T) {
-	input := `print(((2 + 4 - 6 * 9) / 2) < 2);`
+	input := `print(((2 + 4 - 6 * 9) / 2) != 2);`
 
 	tests := []struct {
 		expectedType token.TokenType
@@ -28,7 +28,7 @@ func TestNextToken(t *testing.T) {
 		{token.SLASH, "/"},
 		{token.INT, "2"},
 		{token.RPAREN, ")"},
-		{token.LT, "<"},
+		{token.NOT_EQ, "!="},
 		{token.INT, "2"},
 		{token.RPAREN, ")"},
 		{token.SEMICOLON, ";"},
