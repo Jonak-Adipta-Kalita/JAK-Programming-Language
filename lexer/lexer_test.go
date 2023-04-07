@@ -7,23 +7,26 @@ import (
 )
 
 func TestNextToken(t *testing.T) {
-	input := `=+-!*/(){},;`
+	input := `print((2 + 4 - 6 * 9) / 2);`
 
 	tests := []struct {
 		expectedType token.TokenType
 		expectedLiteral string
 	}{
-		{token.TT_ASSIGN, "="},
-		{token.TT_PLUS, "+"},
-		{token.TT_MINUS, "-"},
-		{token.TT_BANG, "!"},
-		{token.TT_ASTER, "*"},
-		{token.TT_SLASH, "/"},
+		{token.TT_PRINT, "print"},
 		{token.TT_LPAREN, "("},
+		{token.TT_LPAREN, "("},
+		{token.TT_INT, "2"},
+		{token.TT_PLUS, "+"},
+		{token.TT_INT, "4"},
+		{token.TT_MINUS, "-"},
+		{token.TT_INT, "6"},
+		{token.TT_ASTER, "*"},
+		{token.TT_INT, "9"},
 		{token.TT_RPAREN, ")"},
-		{token.TT_LBRACE, "{"},
-		{token.TT_RBRACE, "}"},
-		{token.TT_COMMA, ","},
+		{token.TT_SLASH, "/"},
+		{token.TT_INT, "2"},
+		{token.TT_RPAREN, ")"},
 		{token.TT_SEMICOLON, ";"},
 		{token.TT_EOF, ""},
 	}
