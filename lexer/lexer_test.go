@@ -22,7 +22,7 @@ func TestNextToken(t *testing.T) {
 		{token.INT, "4"},
 		{token.MINUS, "-"},
 		{token.INT, "6"},
-		{token.ASTER, "*"},
+		{token.ASTERISK, "*"},
 		{token.INT, "9"},
 		{token.RPAREN, ")"},
 		{token.SLASH, "/"},
