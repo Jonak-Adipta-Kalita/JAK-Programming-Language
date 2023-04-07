@@ -49,6 +49,8 @@ func (p *Parser) parseStatement() ast.Statement {
 	switch p.curToken.Type {
 		case token.VAR:
 			return p.parseVarStatement()
+		case token.RETURN:
+			return p.parseReturnStatement()
 		default:
 			return nil
 	}
@@ -82,6 +84,8 @@ func (p *Parser) peekError(t token.TokenType) {
 	p.errors = append(p.errors, msg)
 }
 
+// Parsing Statements
+
 func (p *Parser) parseVarStatement() *ast.VarStatement {
 	stmt := &ast.VarStatement{Token: p.curToken}
 	if !p.expectPeek(token.IDENTIFIER) {
@@ -100,3 +104,14 @@ func (p *Parser) parseVarStatement() *ast.VarStatement {
 
 	return stmt
 }
+
+func (p *Parser) parseReturnStatement() *ast.ReturnStatement {
+	stmt := &ast.ReturnStatement{Token: p.curToken}
+	p.nextToken()
+
+	for !p.curTokenIs(token.SEMICOLON) {
+		p.nextToken()
+	}
+
+	return stmt
+}	
