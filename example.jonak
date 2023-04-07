@@ -1,2 +1,7 @@
-print("Hello World");
 print((2 + 4 - 6 * 9) / 2);
+
+var helloWorld = fn(hello, world) {
+    return hello + " " + world;
+};
+
+print(helloWorld("Hello!", "World!"));

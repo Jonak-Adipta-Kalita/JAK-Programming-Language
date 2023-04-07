@@ -35,32 +35,36 @@ func (l *Lexer) NextToken() token.Token {
 
 	switch l.ch {
 		case '=':
-			tok = newToken(token.TT_ASSIGN, l.ch)
+			tok = newToken(token.ASSIGN, l.ch)
 		case ';':
-			tok = newToken(token.TT_SEMICOLON, l.ch)
+			tok = newToken(token.SEMICOLON, l.ch)
 		case '(':
-			tok = newToken(token.TT_LPAREN, l.ch)
+			tok = newToken(token.LPAREN, l.ch)
 		case ')':
-			tok = newToken(token.TT_RPAREN, l.ch)
+			tok = newToken(token.RPAREN, l.ch)
 		case ',':
-			tok = newToken(token.TT_COMMA, l.ch)
+			tok = newToken(token.COMMA, l.ch)
 		case '+':
-			tok = newToken(token.TT_PLUS, l.ch)
+			tok = newToken(token.PLUS, l.ch)
 		case '-':
-			tok = newToken(token.TT_MINUS, l.ch)
+			tok = newToken(token.MINUS, l.ch)
 		case '!':
-			tok = newToken(token.TT_BANG, l.ch)
+			tok = newToken(token.BANG, l.ch)
 		case '*':
-			tok = newToken(token.TT_ASTER, l.ch)
+			tok = newToken(token.ASTER, l.ch)
 		case '/':
-			tok = newToken(token.TT_SLASH, l.ch)
+			tok = newToken(token.SLASH, l.ch)
+		case '<':
+			tok = newToken(token.LT, l.ch)
+		case '>':
+			tok = newToken(token.GT, l.ch)
 		case '{':
-			tok = newToken(token.TT_LBRACE, l.ch)
+			tok = newToken(token.LBRACE, l.ch)
 		case '}':
-			tok = newToken(token.TT_RBRACE, l.ch)
+			tok = newToken(token.RBRACE, l.ch)
 		case 0:
 			tok.Literal = ""
-			tok.Type = token.TT_EOF
+			tok.Type = token.EOF
 		default:
 			if isLetter(l.ch) {
 				tok.Literal = l.readIdentifier()
@@ -68,12 +72,12 @@ func (l *Lexer) NextToken() token.Token {
 
 				return tok
 			} else if isDigit(l.ch) {
-				tok.Type = token.TT_INT
+				tok.Type = token.INT
 				tok.Literal = l.readNumber()
 
 				return tok
 			} else {
-				tok = newToken(token.TT_ILLEGAL, l.ch)
+				tok = newToken(token.ILLEGAL, l.ch)
 			}			
 	}
 

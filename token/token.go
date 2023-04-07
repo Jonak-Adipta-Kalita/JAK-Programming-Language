@@ -7,42 +7,45 @@ type Token struct {
 }
 
 const (
-	TT_ILLEGAL = "ILLEGAL"
-	TT_EOF     = "EOF"
+	ILLEGAL = "ILLEGAL"
+	EOF     = "EOF"
 
-	TT_IDENTIFIER = "IDENTIFIER"
-	TT_INT        = "INT"
-	TT_STRING     = "STRING"
-	TT_BOOL       = "BOOL"
+	IDENTIFIER = "IDENTIFIER"
+	INT        = "INT"
+	STRING     = "STRING"
+	BOOL       = "BOOL"
 
-	TT_ASSIGN = "="
-	TT_PLUS   = "+"
-	TT_MINUS  = "-"
-	TT_BANG   = "!"
-	TT_ASTER  = "*"
-	TT_SLASH  = "/"
+	ASSIGN = "="
+	PLUS   = "+"
+	MINUS  = "-"
+	BANG   = "!"
+	ASTER  = "*"
+	SLASH  = "/"
 
-	TT_COMMA     = ","
-	TT_SEMICOLON = ";"
-	TT_LPAREN    = "("
-	TT_RPAREN    = ")"
-	TT_LBRACE    = "{"
-	TT_RBRACE    = "}"
+	LT = "<"
+	GT = ">"
 
-	TT_FUNCTION = "FUNCTION"
-	TT_VAR      = "VAR"
-	TT_PRINT    = "PRINT"
+	COMMA     = ","
+	SEMICOLON = ";"
+	LPAREN    = "("
+	RPAREN    = ")"
+	LBRACE    = "{"
+	RBRACE    = "}"
+
+	FUNCTION = "FUNCTION"
+	VAR      = "VAR"
+	PRINT    = "PRINT"
 )
 
 var keywords = map[string]TokenType{
-	"fn":    TT_FUNCTION,
-	"var":   TT_VAR,
-	"print": TT_PRINT,
+	"fn":    FUNCTION,
+	"var":   VAR,
+	"print": PRINT,
 }
 
 func LookupIdent(ident string) TokenType {
 	if tok, ok := keywords[ident]; ok {
 		return tok
 	}
-	return TT_IDENTIFIER
+	return IDENTIFIER
 }

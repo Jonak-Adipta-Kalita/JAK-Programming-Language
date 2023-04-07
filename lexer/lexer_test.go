@@ -7,28 +7,32 @@ import (
 )
 
 func TestNextToken(t *testing.T) {
-	input := `print((2 + 4 - 6 * 9) / 2);`
+	input := `print(((2 + 4 - 6 * 9) / 2) < 2);`
 
 	tests := []struct {
 		expectedType token.TokenType
 		expectedLiteral string
 	}{
-		{token.TT_PRINT, "print"},
-		{token.TT_LPAREN, "("},
-		{token.TT_LPAREN, "("},
-		{token.TT_INT, "2"},
-		{token.TT_PLUS, "+"},
-		{token.TT_INT, "4"},
-		{token.TT_MINUS, "-"},
-		{token.TT_INT, "6"},
-		{token.TT_ASTER, "*"},
-		{token.TT_INT, "9"},
-		{token.TT_RPAREN, ")"},
-		{token.TT_SLASH, "/"},
-		{token.TT_INT, "2"},
-		{token.TT_RPAREN, ")"},
-		{token.TT_SEMICOLON, ";"},
-		{token.TT_EOF, ""},
+		{token.PRINT, "print"},
+		{token.LPAREN, "("},
+		{token.LPAREN, "("},
+		{token.LPAREN, "("},
+		{token.INT, "2"},
+		{token.PLUS, "+"},
+		{token.INT, "4"},
+		{token.MINUS, "-"},
+		{token.INT, "6"},
+		{token.ASTER, "*"},
+		{token.INT, "9"},
+		{token.RPAREN, ")"},
+		{token.SLASH, "/"},
+		{token.INT, "2"},
+		{token.RPAREN, ")"},
+		{token.LT, "<"},
+		{token.INT, "2"},
+		{token.RPAREN, ")"},
+		{token.SEMICOLON, ";"},
+		{token.EOF, ""},
 	}
 	
 	l := New(input)
