@@ -54,25 +54,6 @@ func (p *Parser) parseStatement() ast.Statement {
 	}
 }
 
-func (p *Parser) parseVarStatement() *ast.VarStatement {
-	stmt := &ast.VarStatement{Token: p.curToken}
-	if !p.expectPeek(token.IDENTIFIER) {
-		return nil
-	}
-	
-	stmt.Name = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
-	
-	if !p.expectPeek(token.ASSIGN) {
-		return nil
-	}
-
-	for !p.curTokenIs(token.SEMICOLON) {
-		p.nextToken()
-	}
-
-	return stmt
-}
-
 func (p *Parser) curTokenIs(t token.TokenType) bool {
 	return p.curToken.Type == t
 }
@@ -99,4 +80,23 @@ func (p *Parser) peekError(t token.TokenType) {
 	msg := fmt.Sprintf("expected next token to be %s, got %s instead",
 	t, p.peekToken.Type)
 	p.errors = append(p.errors, msg)
+}
+
+func (p *Parser) parseVarStatement() *ast.VarStatement {
+	stmt := &ast.VarStatement{Token: p.curToken}
+	if !p.expectPeek(token.IDENTIFIER) {
+		return nil
+	}
+	
+	stmt.Name = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
+	
+	if !p.expectPeek(token.ASSIGN) {
+		return nil
+	}
+
+	for !p.curTokenIs(token.SEMICOLON) {
+		p.nextToken()
+	}
+
+	return stmt
 }
