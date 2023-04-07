@@ -1,0 +1,4 @@
+# This is a comment
+
+print("Hello World");
+print((2 + 4 - 6 * 9) / 2);
