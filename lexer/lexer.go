@@ -1,1 +1,5 @@
 package lexer
+
+func NewLexer() {
+
+}

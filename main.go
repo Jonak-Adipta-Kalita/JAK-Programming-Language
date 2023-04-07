@@ -11,7 +11,7 @@ func main() {
 			var codeLine string
 			fmt.Print(">>> ")
 			fmt.Scanln(&codeLine)
-			fmt.Println(codeLine)
+			fmt.Print(codeLine + "\n")
 
 			// TODO: Run code
 		}
