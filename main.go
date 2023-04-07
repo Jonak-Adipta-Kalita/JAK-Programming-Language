@@ -11,16 +11,15 @@ func main() {
 		repl.Start(os.Stdin, os.Stdout)
 	} else {
 		fileName := os.Args[1]
-	
+
 		file, err := os.Open(fileName)
-	
+
 		if err != nil {
 			panic(err)
 		}
-	
+
 		defer file.Close()
 
 		// TODO: Run Code in file
 	}
-
 }
