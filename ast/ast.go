@@ -38,8 +38,8 @@ type VarStatement struct {
 	Name  *Identifier
 	Value Expression
 }
-func (ls *VarStatement) statementNode() {}
-func (ls *VarStatement) TokenLiteral() string { return ls.Token.Literal }
+func (vs *VarStatement) statementNode() {}
+func (vs *VarStatement) TokenLiteral() string { return vs.Token.Literal }
 
 type ReturnStatement struct {
 	Token       token.Token
