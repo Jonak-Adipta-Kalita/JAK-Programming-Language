@@ -1,16 +1,18 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 )
 
 func main() {
 	if len(os.Args) != 2 {
+		reader := bufio.NewReader(os.Stdin)
 		for {
 			var codeLine string
 			fmt.Print(">>> ")
-			fmt.Scanln(&codeLine)
+			codeLine, _ = reader.ReadString('\n')
 			fmt.Print(codeLine + "\n")
 
 			// TODO: Run code
