@@ -1,22 +1,14 @@
 package main
 
 import (
-	"bufio"
-	"fmt"
 	"os"
+
+	"github.com/Jonak-Adipta-Kalita/JAK-Programming-Language/repl"
 )
 
 func main() {
 	if len(os.Args) != 2 {
-		reader := bufio.NewReader(os.Stdin)
-		for {
-			var codeLine string
-			fmt.Print(">>> ")
-			codeLine, _ = reader.ReadString('\n')
-			fmt.Print(codeLine + "\n")
-
-			// TODO: Run code
-		}
+		repl.Start(os.Stdin, os.Stdout)
 	} else {
 		fileName := os.Args[1]
 	
