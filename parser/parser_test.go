@@ -86,7 +86,12 @@ func testVarStatement(t *testing.T, s ast.Statement, name string) bool {
 }
 
 func TestReturnStatements(t *testing.T) {
-	input := `return 5;`
+	input := `
+		return 5;
+		return 10;
+		return 993322;
+	`
+
 	
 	l := lexer.New(input)
 	p := New(l)
