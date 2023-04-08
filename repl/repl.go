@@ -7,6 +7,7 @@ import (
 
 	"github.com/Jonak-Adipta-Kalita/JAK-Programming-Language/evaluator"
 	"github.com/Jonak-Adipta-Kalita/JAK-Programming-Language/lexer"
+	"github.com/Jonak-Adipta-Kalita/JAK-Programming-Language/object"
 	"github.com/Jonak-Adipta-Kalita/JAK-Programming-Language/parser"
 )
 
@@ -18,6 +19,8 @@ func Start(in io.Reader, out io.Writer) {
 		fmt.Print(PROMPT)
 
 		scanned := scanner.Scan()
+		env := object.NewEnvironment()
+
 		if !scanned {
 			return
 		}
@@ -32,7 +35,7 @@ func Start(in io.Reader, out io.Writer) {
 			continue
 		}
 
-		evaluated := evaluator.Eval(program)
+		evaluated := evaluator.Eval(program, env)
 		if evaluated != nil {
 			io.WriteString(out, evaluated.Inspect())
 			io.WriteString(out, "\n")
