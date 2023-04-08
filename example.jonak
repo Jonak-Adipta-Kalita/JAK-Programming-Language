@@ -1,7 +1,8 @@
 print((2 + 4 - 6 * 9) / 2);
 
-var helloWorld = fn(hello, world) {
-    return hello + " " + world;
+var add = fn(num1, num2) {
+    return num1 + num2;
 };
 
-print(helloWorld("Hello!", "World!"));
+var result = add(1, 2);
+print(result);
