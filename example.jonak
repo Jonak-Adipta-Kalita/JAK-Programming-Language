@@ -2,7 +2,7 @@ print((2 + 4 - 6 * 9) / 2);
 
 var add = func(num1, num2) {
     return num1 + num2;
-}
+};
 
 var result = add(1, 2);
 
