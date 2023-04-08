@@ -50,6 +50,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		if isError(val) {
 			return val
 		}
+		env.Set(node.Name.Value, val)
 	case *ast.IntegerLiteral:
 		return &object.Integer{Value: node.Value}
 	case *ast.Boolean:
@@ -94,17 +95,6 @@ func evalBlockStatement(block *ast.BlockStatement, env *object.Environment) obje
 			if rt == object.RETURN_VALUE_OBJ || rt == object.ERROR_OBJ {
 				return result
 			}
-		}
-	}
-	return result
-}
-
-func evalStatements(stmts []ast.Statement, env *object.Environment) object.Object {
-	var result object.Object
-	for _, statement := range stmts {
-		result = Eval(statement, env)
-		if returnValue, ok := result.(*object.ReturnValue); ok {
-			return returnValue.Value
 		}
 	}
 	return result
