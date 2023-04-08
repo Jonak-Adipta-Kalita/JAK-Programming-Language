@@ -16,11 +16,14 @@ type Object interface {
 }
 
 const (
-	INTEGER_OBJ      = "INTEGER"
-	BOOLEAN_OBJ      = "BOOLEAN"
-	NULL_OBJ         = "NULL"
+	INTEGER_OBJ = "INTEGER"
+	STRING_OBJ  = "STRING"
+	BOOLEAN_OBJ = "BOOLEAN"
+
+	NULL_OBJ  = "NULL"
+	ERROR_OBJ = "ERROR"
+
 	RETURN_VALUE_OBJ = "RETURN_VALUE"
-	ERROR_OBJ        = "ERROR"
 	FUNCTION_OBJ     = "FUNCTION"
 )
 
@@ -78,3 +81,10 @@ type Error struct {
 
 func (e *Error) Type() ObjectType { return ERROR_OBJ }
 func (e *Error) Inspect() string  { return "ERROR: " + e.Message }
+
+type String struct {
+	Value string
+}
+
+func (s *String) Type() ObjectType { return STRING_OBJ }
+func (s *String) Inspect() string  { return s.Value }
