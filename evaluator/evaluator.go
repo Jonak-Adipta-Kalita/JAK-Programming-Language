@@ -101,7 +101,13 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 	case *ast.ForLoopExpression:
 		return evalForLoopExpression(node, env)
 	case *ast.PostfixExpression:
-		return evalPostfixExpression(env, node.Operator, node)
+		res := evalPostfixExpression(env, node.Operator, node)
+		if isError(res) {
+			fmt.Fprintf(os.Stderr, "%s\n", res.Inspect())
+			return NULL
+		} else {
+			return res
+		}
 	}
 	return nil
 }
