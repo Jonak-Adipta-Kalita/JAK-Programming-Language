@@ -17,4 +17,10 @@ if (true) {
     var helloWorldArray = push(helloWorldArray, helloWorldHash_two);
 }
 
-print(HelloWorld(helloWorldArray[1]["hello"], helloWorldArray[1]["world"]));
+var counter = 1;
+
+for (counter > 5) {
+    print(HelloWorld(helloWorldArray[1]["hello"], helloWorldArray[1]["world"]));
+    counter++;
+}
+
