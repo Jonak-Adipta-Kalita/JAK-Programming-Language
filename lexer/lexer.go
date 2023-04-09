@@ -178,22 +178,3 @@ func (l *Lexer) skipSingleLineComment() {
 	}
 	l.skipWhitespace()
 }
-
-func (l *Lexer) skipMultiLineComment() {
-	endFound := false
-
-	for !endFound {
-		if l.ch == 0 {
-			endFound = true
-		}
-
-		if l.ch == '*' && l.peekChar() == '/' {
-			endFound = true
-			l.readChar()
-		}
-
-		l.readChar()
-	}
-
-	l.skipWhitespace()
-}
