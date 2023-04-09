@@ -1,9 +1,0 @@
-FUN msg_contain(hello_msg, world_msg) -> hello_msg + ", " + world_msg + "!"
-
-VAR hello = "Hello"
-VAR world = "World"
-VAR msg = msg_contain(hello, world)
-
-FOR i = 0 TO 5 THEN
-	PRINT(msg)
-END

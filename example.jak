@@ -1,0 +1,26 @@
+var HelloWorld = func(hello, world) {
+    return hello + " " + world + "!!";
+};
+
+var helloWorldHash = {
+    "hello": "Hello",
+    "world": "World"
+};
+
+var helloWorldArray = [helloWorldHash];
+
+if (true) {
+    var helloWorldHash_two = {
+        "hello": "Konnichiwa",
+        "world": "Sekai"
+    };
+    var helloWorldArray = push(helloWorldArray, helloWorldHash_two);
+}
+
+var counter = 1;
+
+for (counter > 5) {
+    print(HelloWorld(helloWorldArray[1]["hello"], helloWorldArray[1]["world"]));
+    counter++;
+}
+
