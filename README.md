@@ -25,7 +25,7 @@ git clone https://github.com/Jonak-Adipta-Kalita/JAK-Programming-Language.git
 To install the required modules, just open a terminal in the directory where this project is cloned. Now type:
 
 ```bash
-go mod tidy
+go install
 ```
 
 and hit Enter.
