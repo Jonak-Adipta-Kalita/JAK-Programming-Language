@@ -34,6 +34,9 @@ func (l *Lexer) NextToken() token.Token {
 	l.skipWhitespace()
 
 	switch l.ch {
+	case '#':
+		l.skipSingleLineComment()
+		return l.NextToken()
 	case '=':
 		if l.peekChar() == '=' {
 			ch := l.ch
@@ -167,4 +170,30 @@ func (l *Lexer) peekChar() byte {
 	} else {
 		return l.input[l.readPosition]
 	}
+}
+
+func (l *Lexer) skipSingleLineComment() {
+	for l.ch != '\n' && l.ch != 0 {
+		l.readChar()
+	}
+	l.skipWhitespace()
+}
+
+func (l *Lexer) skipMultiLineComment() {
+	endFound := false
+
+	for !endFound {
+		if l.ch == 0 {
+			endFound = true
+		}
+
+		if l.ch == '*' && l.peekChar() == '/' {
+			endFound = true
+			l.readChar()
+		}
+
+		l.readChar()
+	}
+
+	l.skipWhitespace()
 }
