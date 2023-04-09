@@ -1,13 +1,22 @@
-print((2 + 4 - 6 * 9) / 2);
-
-var add = func(num1, num2) {
-    return num1 + num2;
+var printHelloWorld = func(hello, world) {
+    return hello + " " + world + "!!"
 };
 
-var result = add(1, 2);
+var helloWorldHash = {
+    hello: "Hello",
+    world: "World"
+};
 
-if (result == 3) {
-    print("It works!");
+var helloWorldArray = [helloWorldHash];
+
+if (true) {
+    var helloWorldHash_two = {
+        hello: "Konnichiwa",
+        world: "Sekai"
+    };
+    push(helloWorldArray, helloWorldHash);
 } else {
-    print("It doesn't work!");
+    print("Not possible!!")
 }
+
+printHelloWorld(helloWorldArray[1]["hello"], helloWorldArray[1]["world"]);
