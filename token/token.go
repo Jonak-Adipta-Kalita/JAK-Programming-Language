@@ -48,6 +48,7 @@ const (
 	FALSE    = "FALSE"
 	FOR      = "FOR"
 	IMPORT   = "USE"
+	AS       = "AS"
 )
 
 var keywords = map[string]TokenType{
@@ -60,6 +61,7 @@ var keywords = map[string]TokenType{
 	"false":  FALSE,
 	"for":    FOR,
 	"use":    IMPORT,
+	"as":     AS,
 }
 
 func LookupIdent(ident string) TokenType {
