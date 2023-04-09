@@ -441,17 +441,20 @@ func evalHashIndexExpression(hash, index object.Object) object.Object {
 }
 
 func evalForLoopExpression(fle *ast.ForLoopExpression, env *object.Environment) object.Object {
-	results := []object.Object{NULL}
+	var rt object.Object
 	for {
 		condition := Eval(fle.Condition, env)
 		if isError(condition) {
 			return condition
 		}
-		if isTruthy(condition) {
-			results = append(results, Eval(fle.Consequence, env))
+		if !isTruthy(condition) {
+			rt := Eval(fle.Consequence, env)
+			if !isError(rt) && (rt.Type() == object.RETURN_VALUE_OBJ || rt.Type() == object.ERROR_OBJ) {
+				return rt
+			}
 		} else {
 			break
 		}
 	}
-	return results[len(results)-1]
+	return rt
 }
