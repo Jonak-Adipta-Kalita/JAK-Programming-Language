@@ -38,19 +38,22 @@ var precedences = map[token.TokenType]int{
 }
 
 type (
-	prefixParseFn func() ast.Expression
-	infixParseFn  func(ast.Expression) ast.Expression
+	prefixParseFn  func() ast.Expression
+	infixParseFn   func(ast.Expression) ast.Expression
+	postfixParseFn func() ast.Expression
 )
 
 type Parser struct {
 	l      *lexer.Lexer
 	errors []string
 
+	prevToken token.Token
 	curToken  token.Token
 	peekToken token.Token
 
-	prefixParseFns map[token.TokenType]prefixParseFn
-	infixParseFns  map[token.TokenType]infixParseFn
+	prefixParseFns  map[token.TokenType]prefixParseFn
+	infixParseFns   map[token.TokenType]infixParseFn
+	postfixParseFns map[token.TokenType]postfixParseFn
 }
 
 func New(l *lexer.Lexer) *Parser {
@@ -90,10 +93,18 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerInfix(token.LBRACKET, p.parseIndexExpression)
 	p.registerPrefix(token.LBRACE, p.parseHashLiteral)
 
+	p.postfixParseFns = make(map[token.TokenType]postfixParseFn)
+	p.registerPostfix(token.PLUS_PLUS, p.parsePostfixExpression)
+	p.registerPostfix(token.MINUS_MINUS, p.parsePostfixExpression)
+
 	p.nextToken()
 	p.nextToken()
 
 	return p
+}
+
+func (p *Parser) registerPostfix(tokenType token.TokenType, fn postfixParseFn) {
+	p.postfixParseFns[tokenType] = fn
 }
 
 func (p *Parser) peekPrecedence() int {
@@ -269,6 +280,12 @@ func (p *Parser) noPrefixParseFnError(t token.TokenType) {
 }
 
 func (p *Parser) parseExpression(precedence int) ast.Expression {
+	postfix := p.postfixParseFns[p.curToken.Type]
+
+	if postfix != nil {
+		return (postfix())
+	}
+
 	prefix := p.prefixParseFns[p.curToken.Type]
 
 	if prefix == nil {
@@ -290,7 +307,16 @@ func (p *Parser) parseExpression(precedence int) ast.Expression {
 	return leftExp
 }
 
+func (p *Parser) parsePostfixExpression() ast.Expression {
+	expression := &ast.PostfixExpression{
+		Token:    p.prevToken,
+		Operator: p.curToken.Literal,
+	}
+	return expression
+}
+
 func (p *Parser) nextToken() {
+	p.prevToken = p.curToken
 	p.curToken = p.peekToken
 	p.peekToken = p.l.NextToken()
 }
