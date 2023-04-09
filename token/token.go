@@ -33,6 +33,8 @@ const (
 	RPAREN    = ")"
 	LBRACE    = "{"
 	RBRACE    = "}"
+	LBRACKET  = "["
+	RBRACKET  = "]"
 
 	FUNCTION = "FUNCTION"
 	VAR      = "VAR"
