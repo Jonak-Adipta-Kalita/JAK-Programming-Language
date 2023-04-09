@@ -228,14 +228,18 @@ func evalInfixExpression(
 	left, right object.Object,
 ) object.Object {
 	switch {
-	case left.Type() == object.INTEGER_OBJ && right.Type() == object.INTEGER_OBJ:
-		return evalIntegerInfixExpression(operator, left, right)
-	case left.Type() == object.STRING_OBJ && right.Type() == object.STRING_OBJ:
-		return evalStringInfixExpression(operator, left, right)
 	case operator == "==":
 		return nativeBoolToBooleanObject(left == right)
 	case operator == "!=":
 		return nativeBoolToBooleanObject(left != right)
+	case operator == "&&":
+		return nativeBoolToBooleanObject(coerceObjectToNativeBool(left) && coerceObjectToNativeBool(right))
+	case operator == "||":
+		return nativeBoolToBooleanObject(coerceObjectToNativeBool(left) || coerceObjectToNativeBool(right))
+	case left.Type() == object.INTEGER_OBJ && right.Type() == object.INTEGER_OBJ:
+		return evalIntegerInfixExpression(operator, left, right)
+	case left.Type() == object.STRING_OBJ && right.Type() == object.STRING_OBJ:
+		return evalStringInfixExpression(operator, left, right)
 	case left.Type() != right.Type():
 		return newError("type mismatch: %s %s %s",
 			left.Type(), operator, right.Type())
@@ -264,6 +268,29 @@ func evalMinusPrefixOperatorExpression(right object.Object) object.Object {
 	}
 	value := right.(*object.Integer).Value
 	return &object.Integer{Value: -value}
+}
+
+func coerceObjectToNativeBool(o object.Object) bool {
+	if rv, ok := o.(*object.ReturnValue); ok {
+		o = rv.Value
+	}
+
+	switch obj := o.(type) {
+	case *object.Boolean:
+		return obj.Value
+	case *object.String:
+		return obj.Value != ""
+	case *object.Null:
+		return false
+	case *object.Integer:
+		return obj.Value != 0
+	case *object.Array:
+		return len(obj.Elements) > 0
+	case *object.Hash:
+		return len(obj.Pairs) > 0
+	default:
+		return true
+	}
 }
 
 func evalIntegerInfixExpression(

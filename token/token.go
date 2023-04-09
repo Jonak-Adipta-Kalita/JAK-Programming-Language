@@ -29,6 +29,8 @@ const (
 	GT_EQ       = ">="
 	PLUS_PLUS   = "++"
 	MINUS_MINUS = "--"
+	AND         = "&&"
+	OR          = "||"
 
 	COMMA     = ","
 	SEMICOLON = ";"
