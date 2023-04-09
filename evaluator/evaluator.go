@@ -2,6 +2,7 @@ package evaluator
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/Jonak-Adipta-Kalita/JAK-Programming-Language/ast"
 	"github.com/Jonak-Adipta-Kalita/JAK-Programming-Language/object"
@@ -70,7 +71,13 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		if len(args) == 1 && isError(args[0]) {
 			return args[0]
 		}
-		return applyFunction(function, args)
+		res := applyFunction(function, args)
+		if isError(res) {
+			fmt.Fprintf(os.Stderr, "Error calling `%s` : %s\n", node.Function, res.Inspect())
+			return NULL
+		} else {
+			return res
+		}
 	case *ast.StringLiteral:
 		return &object.String{Value: node.Value}
 	case *ast.ArrayLiteral:
