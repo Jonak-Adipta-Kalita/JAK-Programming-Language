@@ -91,6 +91,8 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		return evalIndexExpression(left, index)
 	case *ast.HashLiteral:
 		return evalHashLiteral(node, env)
+	case *ast.ForLoopExpression:
+		return evalForLoopExpression(node, env)
 	}
 	return nil
 }
@@ -386,4 +388,20 @@ func evalHashIndexExpression(hash, index object.Object) object.Object {
 		return NULL
 	}
 	return pair.Value
+}
+
+func evalForLoopExpression(fle *ast.ForLoopExpression, env *object.Environment) object.Object {
+	results := []object.Object{NULL}
+	for {
+		condition := Eval(fle.Condition, env)
+		if isError(condition) {
+			return condition
+		}
+		if isTruthy(condition) {
+			results = append(results, Eval(fle.Consequence, env))
+		} else {
+			break
+		}
+	}
+	return results[len(results)-1]
 }
