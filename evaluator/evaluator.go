@@ -293,6 +293,8 @@ func evalIntegerInfixExpression(
 		return nativeBoolToBooleanObject(leftVal <= rightVal)
 	case ">=":
 		return nativeBoolToBooleanObject(leftVal >= rightVal)
+	case "%":
+		return &object.Integer{Value: leftVal % rightVal}
 	default:
 		return newError("unknown operator: %s %s %s",
 			left.Type(), operator, right.Type())
