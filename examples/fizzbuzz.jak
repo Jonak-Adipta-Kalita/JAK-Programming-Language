@@ -4,14 +4,11 @@ func fizzBuzz(number) {
 
     if (number % 3 == 0 && number % 5 == 0) {
         println(fizz, buzz);
-    }
-    else if (number % 3 == 0) {
+    } elif (number % 3 == 0) {
         println(fizz);
-    }
-    else if (number % 5 == 0) {
+    } elif (number % 5 == 0) {
         println(buzz);
-    }
-    else {
+    } else {
         println(number);
     }
 }
