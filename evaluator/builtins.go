@@ -105,4 +105,15 @@ var builtins = map[string]*object.Builtin{
 			return NULL
 		},
 	},
+	"input": {
+		Fn: func(args ...object.Object) object.Object {
+			if len(args) != 1 {
+				return newError("wrong number of arguments. got=%d, want=1", len(args))
+			}
+			var input string
+			fmt.Print(args[0].Inspect())
+			fmt.Scanln(&input)
+			return &object.String{Value: input}
+		},
+	},
 }
