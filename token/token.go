@@ -38,7 +38,6 @@ const (
 
 	FUNCTION = "FUNCTION"
 	VAR      = "VAR"
-	PRINT    = "PRINT"
 	IF       = "IF"
 	ELSE     = "ELSE"
 	RETURN   = "RETURN"
@@ -49,7 +48,6 @@ const (
 var keywords = map[string]TokenType{
 	"func":   FUNCTION,
 	"var":    VAR,
-	"print":  PRINT,
 	"if":     IF,
 	"else":   ELSE,
 	"return": RETURN,
