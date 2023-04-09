@@ -1,0 +1,17 @@
+func fizzBuzz(number) {
+    var fizz = "fizz";
+    var buzz = "buzz";
+
+    if (number % 3 == 0 && number % 5 == 0) {
+        println(fizz, buzz);
+    }
+    else if (number % 3 == 0) {
+        println(fizz);
+    }
+    else if (number % 5 == 0) {
+        println(buzz);
+    }
+    else {
+        println(number);
+    }
+}
