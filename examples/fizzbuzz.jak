@@ -2,7 +2,7 @@ var fizzBuzz = func (number) {
     var fizz = "fizz";
     var buzz = "buzz";
 
-    if (number % 3 == 0 && number % 5 == 0) {
+    if ((number % 3 == 0) && (number % 5 == 0)) {
         println(fizz, buzz);
         if (number % 3 == 0) {
             println(fizz);

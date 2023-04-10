@@ -329,14 +329,9 @@ func evalIntegerInfixExpression(
 		return nativeBoolToBooleanObject(leftVal >= rightVal)
 	case "%":
 		return &object.Integer{Value: leftVal % rightVal}
-	case "&&":
-		return nativeBoolToBooleanObject((leftVal != 0) && (rightVal != 0))
-	case "||":
-		return nativeBoolToBooleanObject((leftVal != 0) || (rightVal != 0))
 	default:
 		return newError("unknown operator: %s %s %s", file, line,
 			left.Type(), operator, right.Type())
-
 	}
 }
 
