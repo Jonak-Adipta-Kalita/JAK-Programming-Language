@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/Jonak-Adipta-Kalita/JAK-Programming-Language/evaluator"
+	"github.com/Jonak-Adipta-Kalita/JAK-Programming-Language/file"
 	"github.com/Jonak-Adipta-Kalita/JAK-Programming-Language/lexer"
 	"github.com/Jonak-Adipta-Kalita/JAK-Programming-Language/object"
 	"github.com/Jonak-Adipta-Kalita/JAK-Programming-Language/parser"
@@ -17,6 +18,7 @@ func main() {
 		repl.Start(os.Stdin, os.Stdout)
 	} else {
 		filePath := os.Args[1]
+		file.SetFileName(filePath)
 		contents, err := ioutil.ReadFile(filePath)
 
 		if err != nil {

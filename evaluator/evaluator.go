@@ -385,6 +385,9 @@ func isTruthy(obj object.Object) bool {
 }
 
 func newError(format, file string, line int, a ...interface{}) *object.Error {
+	if file == "" {
+		return &object.Error{Message: fmt.Sprintf(format, a...)}
+	}
 	args := append([]interface{}{file, line}, a...)
 	return &object.Error{Message: fmt.Sprintf("File: %s: Line: %d: "+format, args...)}
 }
