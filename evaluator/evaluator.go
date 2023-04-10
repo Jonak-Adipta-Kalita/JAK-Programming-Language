@@ -387,7 +387,7 @@ func isTruthy(obj object.Object) bool {
 
 func newError(format, file string, line int, a ...interface{}) *object.Error {
 	args := append([]interface{}{file, line}, a...)
-	return &object.Error{Message: fmt.Sprintf("File: %s: Line: %d:"+format, args...)}
+	return &object.Error{Message: fmt.Sprintf("File: %s: Line: %d: "+format, args...)}
 }
 
 func isError(obj object.Object) bool {
@@ -404,7 +404,7 @@ func applyFunction(fn object.Object, args []object.Object, file string, line int
 		evaluated := Eval(fn.Body, extendedEnv)
 		return unwrapReturnValue(evaluated)
 	case *object.Builtin:
-		return fn.Fn(args...)
+		return fn.Fn(file, line, args...)
 	default:
 		return newError("not a function: %s", file, line, fn.Type())
 	}

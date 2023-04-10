@@ -94,7 +94,7 @@ type String struct {
 func (s *String) Type() ObjectType { return STRING_OBJ }
 func (s *String) Inspect() string  { return s.Value }
 
-type BuiltinFunction func(args ...Object) Object
+type BuiltinFunction func(file string, line int, args ...Object) Object
 
 type Builtin struct {
 	Fn BuiltinFunction
