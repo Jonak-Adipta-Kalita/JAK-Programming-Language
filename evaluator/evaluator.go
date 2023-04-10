@@ -233,6 +233,10 @@ func evalInfixExpression(
 	line int,
 ) object.Object {
 	switch {
+	case left.Type() == object.INTEGER_OBJ && right.Type() == object.INTEGER_OBJ:
+		return evalIntegerInfixExpression(operator, left, right, file, line)
+	case left.Type() == object.STRING_OBJ && right.Type() == object.STRING_OBJ:
+		return evalStringInfixExpression(operator, left, right, file, line)
 	case operator == "==":
 		return nativeBoolToBooleanObject(left == right)
 	case operator == "!=":
@@ -241,10 +245,6 @@ func evalInfixExpression(
 		return nativeBoolToBooleanObject(coerceObjectToNativeBool(left) && coerceObjectToNativeBool(right))
 	case operator == "||":
 		return nativeBoolToBooleanObject(coerceObjectToNativeBool(left) || coerceObjectToNativeBool(right))
-	case left.Type() == object.INTEGER_OBJ && right.Type() == object.INTEGER_OBJ:
-		return evalIntegerInfixExpression(operator, left, right, file, line)
-	case left.Type() == object.STRING_OBJ && right.Type() == object.STRING_OBJ:
-		return evalStringInfixExpression(operator, left, right, file, line)
 	case left.Type() != right.Type():
 		return newError("type mismatch: %s %s %s",
 			file, line, left.Type(), operator, right.Type())
@@ -329,6 +329,10 @@ func evalIntegerInfixExpression(
 		return nativeBoolToBooleanObject(leftVal >= rightVal)
 	case "%":
 		return &object.Integer{Value: leftVal % rightVal}
+	case "&&":
+		return nativeBoolToBooleanObject((leftVal != 0) && (rightVal != 0))
+	case "||":
+		return nativeBoolToBooleanObject((leftVal != 0) || (rightVal != 0))
 	default:
 		return newError("unknown operator: %s %s %s", file, line,
 			left.Type(), operator, right.Type())
