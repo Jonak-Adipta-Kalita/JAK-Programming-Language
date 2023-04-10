@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/Jonak-Adipta-Kalita/JAK-Programming-Language/ast"
+	"github.com/Jonak-Adipta-Kalita/JAK-Programming-Language/file"
 	"github.com/Jonak-Adipta-Kalita/JAK-Programming-Language/object"
 )
 
@@ -25,7 +26,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		if isError(right) {
 			return right
 		}
-		return evalPrefixExpression(node.Operator, right)
+		return evalPrefixExpression(node.Operator, right, file.GetFileName(), node.Token.Line)
 	case *ast.InfixExpression:
 		left := Eval(node.Left, env)
 		if isError(left) {
@@ -35,7 +36,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		if isError(right) {
 			return right
 		}
-		return evalInfixExpression(node.Operator, left, right)
+		return evalInfixExpression(node.Operator, left, right, file.GetFileName(), node.Token.Line)
 	case *ast.BlockStatement:
 		return evalBlockStatement(node, env)
 	case *ast.IfExpression:
@@ -57,7 +58,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 	case *ast.Boolean:
 		return nativeBoolToBooleanObject(node.Value)
 	case *ast.Identifier:
-		return evalIdentifier(node, env)
+		return evalIdentifier(node, env, file.GetFileName(), node.Token.Line)
 	case *ast.FunctionLiteral:
 		params := node.Parameters
 		body := node.Body
@@ -71,7 +72,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		if len(args) == 1 && isError(args[0]) {
 			return args[0]
 		}
-		res := applyFunction(function, args)
+		res := applyFunction(function, args, file.GetFileName(), node.Token.Line)
 		if isError(res) {
 			fmt.Fprintf(os.Stderr, "Error calling `%s` : %s\n", node.Function, res.Inspect())
 			return NULL
@@ -95,13 +96,13 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		if isError(index) {
 			return index
 		}
-		return evalIndexExpression(left, index)
+		return evalIndexExpression(left, index, file.GetFileName(), node.Token.Line)
 	case *ast.HashLiteral:
-		return evalHashLiteral(node, env)
+		return evalHashLiteral(node, env, file.GetFileName(), node.Token.Line)
 	case *ast.ForLoopExpression:
 		return evalForLoopExpression(node, env)
 	case *ast.PostfixExpression:
-		res := evalPostfixExpression(env, node.Operator, node)
+		res := evalPostfixExpression(env, node.Operator, node, file.GetFileName(), node.Token.Line)
 		if isError(res) {
 			fmt.Fprintf(os.Stderr, "%s\n", res.Inspect())
 			return NULL
@@ -130,6 +131,8 @@ func evalExpressions(
 func evalIdentifier(
 	node *ast.Identifier,
 	env *object.Environment,
+	file string,
+	line int,
 ) object.Object {
 	if val, ok := env.Get(node.Value); ok {
 		return val
@@ -139,7 +142,7 @@ func evalIdentifier(
 		return builtin
 	}
 
-	return newError("identifier not found: " + node.Value)
+	return newError("identifier not found: "+node.Value, file, line)
 }
 
 func evalProgram(program *ast.Program, env *object.Environment) object.Object {
@@ -177,23 +180,23 @@ func nativeBoolToBooleanObject(input bool) *object.Boolean {
 	return FALSE
 }
 
-func evalPrefixExpression(operator string, right object.Object) object.Object {
+func evalPrefixExpression(operator string, right object.Object, file string, line int) object.Object {
 	switch operator {
 	case "!":
 		return evalBangOperatorExpression(right)
 	case "-":
-		return evalMinusPrefixOperatorExpression(right)
+		return evalMinusPrefixOperatorExpression(right, file, line)
 	default:
-		return newError("unknown operator: %s%s", operator, right.Type())
+		return newError("unknown operator: %s%s", file, line, operator, right.Type())
 	}
 }
 
-func evalPostfixExpression(env *object.Environment, operator string, node *ast.PostfixExpression) object.Object {
+func evalPostfixExpression(env *object.Environment, operator string, node *ast.PostfixExpression, file string, line int) object.Object {
 	switch operator {
 	case "++":
 		val, ok := env.Get(node.Token.Literal)
 		if !ok {
-			return newError("%s is unknown", node.Token.Literal)
+			return newError("%s is unknown", file, line, node.Token.Literal)
 		}
 
 		switch arg := val.(type) {
@@ -202,12 +205,12 @@ func evalPostfixExpression(env *object.Environment, operator string, node *ast.P
 			env.Set(node.Token.Literal, &object.Integer{Value: v + 1})
 			return arg
 		default:
-			return newError("%s is not an int", node.Token.Literal)
+			return newError("%s is not an int", file, line, node.Token.Literal)
 		}
 	case "--":
 		val, ok := env.Get(node.Token.Literal)
 		if !ok {
-			return newError("%s is unknown", node.Token.Literal)
+			return newError("%s is unknown", file, line, node.Token.Literal)
 		}
 
 		switch arg := val.(type) {
@@ -216,16 +219,18 @@ func evalPostfixExpression(env *object.Environment, operator string, node *ast.P
 			env.Set(node.Token.Literal, &object.Integer{Value: v - 1})
 			return arg
 		default:
-			return newError("%s is not an int", node.Token.Literal)
+			return newError("%s is not an int", file, line, node.Token.Literal)
 		}
 	default:
-		return newError("unknown operator: %s", operator)
+		return newError("unknown operator: %s", file, line, operator)
 	}
 }
 
 func evalInfixExpression(
 	operator string,
 	left, right object.Object,
+	file string,
+	line int,
 ) object.Object {
 	switch {
 	case operator == "==":
@@ -237,15 +242,15 @@ func evalInfixExpression(
 	case operator == "||":
 		return nativeBoolToBooleanObject(coerceObjectToNativeBool(left) || coerceObjectToNativeBool(right))
 	case left.Type() == object.INTEGER_OBJ && right.Type() == object.INTEGER_OBJ:
-		return evalIntegerInfixExpression(operator, left, right)
+		return evalIntegerInfixExpression(operator, left, right, file, line)
 	case left.Type() == object.STRING_OBJ && right.Type() == object.STRING_OBJ:
-		return evalStringInfixExpression(operator, left, right)
+		return evalStringInfixExpression(operator, left, right, file, line)
 	case left.Type() != right.Type():
 		return newError("type mismatch: %s %s %s",
-			left.Type(), operator, right.Type())
+			file, line, left.Type(), operator, right.Type())
 	default:
 		return newError("unknown operator: %s %s %s",
-			left.Type(), operator, right.Type())
+			file, line, left.Type(), operator, right.Type())
 	}
 }
 
@@ -262,9 +267,9 @@ func evalBangOperatorExpression(right object.Object) object.Object {
 	}
 }
 
-func evalMinusPrefixOperatorExpression(right object.Object) object.Object {
+func evalMinusPrefixOperatorExpression(right object.Object, file string, line int) object.Object {
 	if right.Type() != object.INTEGER_OBJ {
-		return newError("unknown operator: -%s", right.Type())
+		return newError("unknown operator: -%s", file, line, right.Type())
 	}
 	value := right.(*object.Integer).Value
 	return &object.Integer{Value: -value}
@@ -296,6 +301,8 @@ func coerceObjectToNativeBool(o object.Object) bool {
 func evalIntegerInfixExpression(
 	operator string,
 	left, right object.Object,
+	file string,
+	line int,
 ) object.Object {
 	leftVal := left.(*object.Integer).Value
 	rightVal := right.(*object.Integer).Value
@@ -323,7 +330,7 @@ func evalIntegerInfixExpression(
 	case "%":
 		return &object.Integer{Value: leftVal % rightVal}
 	default:
-		return newError("unknown operator: %s %s %s",
+		return newError("unknown operator: %s %s %s", file, line,
 			left.Type(), operator, right.Type())
 
 	}
@@ -332,6 +339,8 @@ func evalIntegerInfixExpression(
 func evalStringInfixExpression(
 	operator string,
 	left, right object.Object,
+	file string,
+	line int,
 ) object.Object {
 	leftVal := left.(*object.String).Value
 	rightVal := right.(*object.String).Value
@@ -344,7 +353,7 @@ func evalStringInfixExpression(
 	case "!=":
 		return nativeBoolToBooleanObject(leftVal != rightVal)
 	default:
-		return newError("unknown operator: %s %s %s",
+		return newError("unknown operator: %s %s %s", file, line,
 			left.Type(), operator, right.Type())
 	}
 }
@@ -376,8 +385,9 @@ func isTruthy(obj object.Object) bool {
 	}
 }
 
-func newError(format string, a ...interface{}) *object.Error {
-	return &object.Error{Message: fmt.Sprintf(format, a...)}
+func newError(format, file string, line int, a ...interface{}) *object.Error {
+	args := append([]interface{}{file, line}, a...)
+	return &object.Error{Message: fmt.Sprintf("File: %s: Line: %d:"+format, args...)}
 }
 
 func isError(obj object.Object) bool {
@@ -387,7 +397,7 @@ func isError(obj object.Object) bool {
 	return false
 }
 
-func applyFunction(fn object.Object, args []object.Object) object.Object {
+func applyFunction(fn object.Object, args []object.Object, file string, line int) object.Object {
 	switch fn := fn.(type) {
 	case *object.Function:
 		extendedEnv := extendFunctionEnv(fn, args)
@@ -396,7 +406,7 @@ func applyFunction(fn object.Object, args []object.Object) object.Object {
 	case *object.Builtin:
 		return fn.Fn(args...)
 	default:
-		return newError("not a function: %s", fn.Type())
+		return newError("not a function: %s", file, line, fn.Type())
 	}
 }
 
@@ -418,14 +428,14 @@ func unwrapReturnValue(obj object.Object) object.Object {
 	return obj
 }
 
-func evalIndexExpression(left, index object.Object) object.Object {
+func evalIndexExpression(left, index object.Object, file string, line int) object.Object {
 	switch {
 	case left.Type() == object.ARRAY_OBJ && index.Type() == object.INTEGER_OBJ:
 		return evalArrayIndexExpression(left, index)
 	case left.Type() == object.HASH_OBJ:
-		return evalHashIndexExpression(left, index)
+		return evalHashIndexExpression(left, index, file, line)
 	default:
-		return newError("index operator not supported: %s", left.Type())
+		return newError("index operator not supported: %s", file, line, left.Type())
 	}
 }
 
@@ -442,6 +452,8 @@ func evalArrayIndexExpression(array, index object.Object) object.Object {
 func evalHashLiteral(
 	node *ast.HashLiteral,
 	env *object.Environment,
+	file string,
+	line int,
 ) object.Object {
 	pairs := make(map[object.HashKey]object.HashPair)
 	for keyNode, valueNode := range node.Pairs {
@@ -451,7 +463,7 @@ func evalHashLiteral(
 		}
 		hashKey, ok := key.(object.Hashable)
 		if !ok {
-			return newError("unusable as hash key: %s", key.Type())
+			return newError("unusable as hash key: %s", file, line, key.Type())
 		}
 		value := Eval(valueNode, env)
 		if isError(value) {
@@ -463,11 +475,11 @@ func evalHashLiteral(
 	return &object.Hash{Pairs: pairs}
 }
 
-func evalHashIndexExpression(hash, index object.Object) object.Object {
+func evalHashIndexExpression(hash, index object.Object, file string, line int) object.Object {
 	hashObject := hash.(*object.Hash)
 	key, ok := index.(object.Hashable)
 	if !ok {
-		return newError("unusable as hash key: %s", index.Type())
+		return newError("unusable as hash key: %s", file, line, index.Type())
 	}
 	pair, ok := hashObject.Pairs[key.HashKey()]
 	if !ok {

@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/Jonak-Adipta-Kalita/JAK-Programming-Language/ast"
+	"github.com/Jonak-Adipta-Kalita/JAK-Programming-Language/file"
 	"github.com/Jonak-Adipta-Kalita/JAK-Programming-Language/lexer"
 	"github.com/Jonak-Adipta-Kalita/JAK-Programming-Language/token"
 )
@@ -283,7 +284,7 @@ func (p *Parser) parseIdentifier() ast.Expression {
 }
 
 func (p *Parser) noPrefixParseFnError(t token.TokenType) {
-	msg := fmt.Sprintf("no prefix parse function for %s found", t)
+	msg := fmt.Sprintf("File: %s: Line %d: no prefix parse function for %s found", file.GetFileName(), p.curToken.Line, t)
 	p.errors = append(p.errors, msg)
 }
 
@@ -376,8 +377,8 @@ func (p *Parser) Errors() []string {
 }
 
 func (p *Parser) peekError(t token.TokenType) {
-	msg := fmt.Sprintf("expected next token to be %s, got %s instead",
-		t, p.peekToken.Type)
+	msg := fmt.Sprintf("File: %s: Line: %d: expected next token to be %s, got %s instead",
+		file.GetFileName(), p.curToken.Line, t, p.peekToken.Type)
 	p.errors = append(p.errors, msg)
 }
 
@@ -441,7 +442,7 @@ func (p *Parser) parseIntegerLiteral() ast.Expression {
 	value, err := strconv.ParseInt(p.curToken.Literal, 0, 64)
 
 	if err != nil {
-		msg := fmt.Sprintf("could not parse %q as integer", p.curToken.Literal)
+		msg := fmt.Sprintf("File: %s: Line %d: could not parse %q as integer", file.GetFileName(), p.curToken.Line, p.curToken.Literal)
 		p.errors = append(p.errors, msg)
 		return nil
 	}
