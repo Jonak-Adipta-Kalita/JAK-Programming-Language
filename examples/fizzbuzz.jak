@@ -1,14 +1,23 @@
-func fizzBuzz(number) {
+var fizzBuzz = func (number) {
     var fizz = "fizz";
     var buzz = "buzz";
 
     if (number % 3 == 0 && number % 5 == 0) {
         println(fizz, buzz);
-    } elif (number % 3 == 0) {
-        println(fizz);
-    } elif (number % 5 == 0) {
-        println(buzz);
+        if (number % 3 == 0) {
+            println(fizz);
+            if (number % 5 == 0) {
+               println(buzz);
+            }
+        }
     } else {
         println(number);
     }
+}
+
+var number = 1;
+
+for (number > 100) {
+    fizzBuzz(number);
+    number++;
 }
