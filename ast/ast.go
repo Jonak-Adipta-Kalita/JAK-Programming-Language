@@ -337,3 +337,18 @@ func (pe *PostfixExpression) String() string {
 	out.WriteString(")")
 	return out.String()
 }
+
+type ImportStatement struct {
+	Token token.Token
+	Path  *StringLiteral
+}
+
+func (is *ImportStatement) statementNode()       {}
+func (is *ImportStatement) TokenLiteral() string { return is.Token.Literal }
+func (is *ImportStatement) String() string {
+	var out bytes.Buffer
+	out.WriteString(is.TokenLiteral() + " ")
+	out.WriteString(is.Path.Value)
+	out.WriteString(";")
+	return out.String()
+}

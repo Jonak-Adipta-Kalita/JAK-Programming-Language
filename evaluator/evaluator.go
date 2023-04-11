@@ -110,6 +110,8 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		} else {
 			return res
 		}
+	case *ast.ImportStatement:
+		evalImportStatement(node, env)
 	}
 	return nil
 }
@@ -514,4 +516,7 @@ func evalForLoopExpression(fle *ast.ForLoopExpression, env *object.Environment) 
 		}
 	}
 	return rt
+}
+
+func evalImportStatement(is *ast.ImportStatement, env *object.Environment) {
 }
