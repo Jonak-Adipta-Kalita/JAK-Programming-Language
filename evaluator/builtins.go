@@ -59,26 +59,6 @@ var builtins = map[string]*object.Builtin{
 			return NULL
 		},
 	},
-	"rest": {
-		Fn: func(file string, line int, args ...object.Object) object.Object {
-			if len(args) != 1 {
-				return newError("wrong number of arguments. got=%d, want=1", file, line,
-					len(args))
-			}
-			if args[0].Type() != object.ARRAY_OBJ {
-				return newError("argument to `rest` must be ARRAY, got %s", file, line,
-					args[0].Type())
-			}
-			arr := args[0].(*object.Array)
-			length := len(arr.Elements)
-			if length > 0 {
-				newElements := make([]object.Object, length-1)
-				copy(newElements, arr.Elements[1:length])
-				return &object.Array{Elements: newElements}
-			}
-			return NULL
-		},
-	},
 	"push": {
 		Fn: func(file string, line int, args ...object.Object) object.Object {
 			if len(args) != 2 {
@@ -126,6 +106,22 @@ var builtins = map[string]*object.Builtin{
 			fmt.Print(args[0].Inspect())
 			fmt.Scanln(&input)
 			return &object.String{Value: input}
+		},
+	},
+	"range": {
+		Fn: func(file string, line int, args ...object.Object) object.Object {
+			if len(args) != 1 {
+				return newError("wrong number of arguments. got=%d, want=1", file, line, len(args))
+			}
+			if args[0].Type() != object.INTEGER_OBJ {
+				return newError("argument to `range` must be INTEGER, got %s", file, line, args[0].Type())
+			}
+			integer := args[0].(*object.Integer)
+			var elements []object.Object
+			for i := 0; i < int(integer.Value); i++ {
+				elements = append(elements, &object.Integer{Value: int64(i)})
+			}
+			return &object.Array{Elements: elements}
 		},
 	},
 }
