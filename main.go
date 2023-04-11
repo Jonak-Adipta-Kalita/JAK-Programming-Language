@@ -33,7 +33,7 @@ func main() {
 		program := p.ParseProgram()
 
 		if len(p.Errors()) != 0 {
-			repl.PrintParserErrors(os.Stdout, p.Errors())
+			evaluator.PrintParserErrors(os.Stdout, p.Errors())
 			return
 		}
 

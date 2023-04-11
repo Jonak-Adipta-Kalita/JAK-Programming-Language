@@ -2,12 +2,16 @@ package evaluator
 
 import (
 	"fmt"
+	"io"
+	"io/ioutil"
 	"math"
 	"os"
 
 	"github.com/Jonak-Adipta-Kalita/JAK-Programming-Language/ast"
 	"github.com/Jonak-Adipta-Kalita/JAK-Programming-Language/file"
+	"github.com/Jonak-Adipta-Kalita/JAK-Programming-Language/lexer"
 	"github.com/Jonak-Adipta-Kalita/JAK-Programming-Language/object"
+	"github.com/Jonak-Adipta-Kalita/JAK-Programming-Language/parser"
 )
 
 var (
@@ -519,4 +523,30 @@ func evalForLoopExpression(fle *ast.ForLoopExpression, env *object.Environment) 
 }
 
 func evalImportStatement(is *ast.ImportStatement, env *object.Environment) {
+	filePath := is.Path.Value
+	fmt.Println(filePath)
+	file.SetFileName(filePath)
+	contents, err := ioutil.ReadFile(filePath)
+
+	if err != nil {
+		fmt.Printf("Failure to read file '%s'. Err: %s", string(contents), err)
+		return
+	}
+
+	l := lexer.New(string(contents))
+	p := parser.New(l)
+	program := p.ParseProgram()
+
+	if len(p.Errors()) != 0 {
+		PrintParserErrors(os.Stdout, p.Errors())
+		return
+	}
+
+	Eval(program, env)
+}
+
+func PrintParserErrors(out io.Writer, errors []string) {
+	for _, msg := range errors {
+		io.WriteString(out, "\t"+msg+"\n")
+	}
 }
