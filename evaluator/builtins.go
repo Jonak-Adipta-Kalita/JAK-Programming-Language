@@ -2,6 +2,7 @@ package evaluator
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/Jonak-Adipta-Kalita/JAK-Programming-Language/object"
 )
@@ -154,6 +155,19 @@ var builtins = map[string]*object.Builtin{
 				return newError("wrong number of arguments. got=%d, want=1", file, line, len(args))
 			}
 			return &object.String{Value: string(args[0].Type())}
+		},
+	},
+	"exit": {
+		Fn: func(file string, line int, args ...object.Object) object.Object {
+			if len(args) != 1 {
+				return newError("wrong number of arguments. got=%d, want=1", file, line, len(args))
+			}
+			if args[0].Type() != object.INTEGER_OBJ {
+				return newError("argument to `exit` must be INTEGER, got %s", file, line, args[0].Type())
+			}
+			integer := args[0].(*object.Integer)
+			os.Exit(int(integer.Value))
+			return NULL
 		},
 	},
 }
