@@ -524,7 +524,6 @@ func evalForLoopExpression(fle *ast.ForLoopExpression, env *object.Environment) 
 
 func evalImportStatement(is *ast.ImportStatement, env *object.Environment) {
 	filePath := is.Path.Value
-	fmt.Println(filePath)
 	file.SetFileName(filePath)
 	contents, err := ioutil.ReadFile(filePath)
 
