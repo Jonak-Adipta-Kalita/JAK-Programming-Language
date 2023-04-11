@@ -83,6 +83,7 @@ var builtins = map[string]*object.Builtin{
 			return &object.Array{Elements: newElements}
 		},
 	},
+
 	"len": {
 		Fn: func(file string, line int, args ...object.Object) object.Object {
 			if len(args) != 1 {
@@ -145,6 +146,14 @@ var builtins = map[string]*object.Builtin{
 				elements = append(elements, &object.Integer{Value: int64(i)})
 			}
 			return &object.Array{Elements: elements}
+		},
+	},
+	"typeof": {
+		Fn: func(file string, line int, args ...object.Object) object.Object {
+			if len(args) != 1 {
+				return newError("wrong number of arguments. got=%d, want=1", file, line, len(args))
+			}
+			return &object.String{Value: string(args[0].Type())}
 		},
 	},
 }
