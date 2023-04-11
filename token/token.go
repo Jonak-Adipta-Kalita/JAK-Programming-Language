@@ -32,6 +32,7 @@ const (
 	MINUS_MINUS = "--"
 	AND         = "&&"
 	OR          = "||"
+	CARET       = "^"
 
 	COMMA     = ","
 	SEMICOLON = ";"

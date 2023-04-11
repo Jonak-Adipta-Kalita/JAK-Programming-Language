@@ -20,6 +20,7 @@ const (
 	SUM
 	PRODUCT
 	MODULO
+	CARET
 	PREFIX
 	CALL
 	INDEX
@@ -39,6 +40,7 @@ var precedences = map[token.TokenType]int{
 	token.AND:      LOGICAL,
 	token.OR:       LOGICAL,
 	token.MODULO:   MODULO,
+	token.CARET:    CARET,
 	token.LPAREN:   CALL,
 	token.LBRACKET: INDEX,
 }
@@ -95,6 +97,7 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerInfix(token.GT, p.parseInfixExpression)
 	p.registerInfix(token.LT_EQ, p.parseInfixExpression)
 	p.registerInfix(token.GT_EQ, p.parseInfixExpression)
+	p.registerInfix(token.CARET, p.parseInfixExpression)
 
 	p.registerPrefix(token.LPAREN, p.parseGroupedExpression)
 	p.registerInfix(token.LPAREN, p.parseCallExpression)

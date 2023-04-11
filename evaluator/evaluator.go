@@ -2,6 +2,7 @@ package evaluator
 
 import (
 	"fmt"
+	"math"
 	"os"
 
 	"github.com/Jonak-Adipta-Kalita/JAK-Programming-Language/ast"
@@ -329,6 +330,8 @@ func evalIntegerInfixExpression(
 		return nativeBoolToBooleanObject(leftVal >= rightVal)
 	case "%":
 		return &object.Integer{Value: leftVal % rightVal}
+	case "^":
+		return &object.Integer{Value: powInt(leftVal, rightVal)}
 	default:
 		return newError("unknown operator: %s %s %s", file, line,
 			left.Type(), operator, right.Type())
@@ -390,6 +393,10 @@ func newError(format, file string, line int, a ...interface{}) *object.Error {
 	}
 	args := append([]interface{}{file, line}, a...)
 	return &object.Error{Message: fmt.Sprintf("File: %s: Line: %d: "+format, args...)}
+}
+
+func powInt(x, y int64) int64 {
+	return int64(math.Pow(float64(x), float64(y)))
 }
 
 func isError(obj object.Object) bool {
