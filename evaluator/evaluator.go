@@ -542,6 +542,7 @@ func evalImportStatement(is *ast.ImportStatement, env *object.Environment) {
 	}
 
 	Eval(program, env)
+	file.SetFileName(file.GetMainFileName())
 }
 
 func PrintParserErrors(out io.Writer, errors []string) {

@@ -18,6 +18,7 @@ func main() {
 		repl.Start(os.Stdin, os.Stdout)
 	} else {
 		filePath := os.Args[1]
+		file.SetMainFileName(filePath)
 		file.SetFileName(filePath)
 		contents, err := ioutil.ReadFile(filePath)
 
