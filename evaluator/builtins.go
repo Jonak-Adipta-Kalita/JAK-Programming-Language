@@ -106,6 +106,26 @@ var builtins = map[string]*object.Builtin{
 			return &object.Array{Elements: pairs}
 		},
 	},
+	"values": {
+		Fn: func(file string, line int, args ...object.Object) object.Object {
+			if len(args) != 1 {
+				return newError("wrong number of arguments. got=%d, want=1", file, line,
+					len(args))
+			}
+			if args[0].Type() != object.HASH_OBJ {
+				return newError("argument to `values` must be HASH, got %s", file, line,
+					args[0].Type())
+			}
+			hash := args[0].(*object.Hash)
+			pairs := []object.Object{}
+
+			for _, pair := range hash.Pairs {
+				pairs = append(pairs, pair.Value)
+			}
+
+			return &object.Array{Elements: pairs}
+		},
+	},
 
 	"len": {
 		Fn: func(file string, line int, args ...object.Object) object.Object {
