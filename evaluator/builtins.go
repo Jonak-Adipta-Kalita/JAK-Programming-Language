@@ -3,6 +3,7 @@ package evaluator
 import (
 	"fmt"
 	"os"
+	"strconv"
 
 	"github.com/Jonak-Adipta-Kalita/JAK-Programming-Language/object"
 )
@@ -168,6 +169,61 @@ var builtins = map[string]*object.Builtin{
 			integer := args[0].(*object.Integer)
 			os.Exit(int(integer.Value))
 			return NULL
+		},
+	},
+	"int": {
+		Fn: func(file string, line int, args ...object.Object) object.Object {
+			if len(args) != 1 {
+				return newError("wrong number of arguments. got=%d, want=1", file, line, len(args))
+			}
+			switch arg := args[0].(type) {
+			case *object.Integer:
+				return arg
+			case *object.String:
+				integer, err := strconv.ParseInt(arg.Value, 10, 64)
+				if err != nil {
+					return newError("could not convert string to integer", file, line)
+				}
+				return &object.Integer{Value: integer}
+			default:
+				return newError("argument to `int` not supported, got %s", file, line, args[0].Type())
+			}
+		},
+	},
+	"str": {
+		Fn: func(file string, line int, args ...object.Object) object.Object {
+			if len(args) != 1 {
+				return newError("wrong number of arguments. got=%d, want=1", file, line, len(args))
+			}
+			switch arg := args[0].(type) {
+			case *object.Integer:
+				return &object.String{Value: strconv.FormatInt(arg.Value, 10)}
+			case *object.String:
+				return arg
+			default:
+				return newError("argument to `str` not supported, got %s", file, line, args[0].Type())
+			}
+		},
+	},
+	"bool": {
+		Fn: func(file string, line int, args ...object.Object) object.Object {
+			if len(args) != 1 {
+				return newError("wrong number of arguments. got=%d, want=1", file, line, len(args))
+			}
+			switch arg := args[0].(type) {
+			case *object.Boolean:
+				return arg
+			case *object.String:
+				if arg.Value == "true" {
+					return TRUE
+				}
+				if arg.Value == "false" {
+					return FALSE
+				}
+				return newError("could not convert string to boolean", file, line)
+			default:
+				return newError("argument to `bool` not supported, got %s", file, line, args[0].Type())
+			}
 		},
 	},
 }
