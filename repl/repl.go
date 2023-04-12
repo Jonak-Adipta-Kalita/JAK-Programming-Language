@@ -6,6 +6,7 @@ import (
 	"io"
 
 	"github.com/Jonak-Adipta-Kalita/JAK-Programming-Language/evaluator"
+	"github.com/Jonak-Adipta-Kalita/JAK-Programming-Language/file"
 	"github.com/Jonak-Adipta-Kalita/JAK-Programming-Language/lexer"
 	"github.com/Jonak-Adipta-Kalita/JAK-Programming-Language/object"
 	"github.com/Jonak-Adipta-Kalita/JAK-Programming-Language/parser"
@@ -14,6 +15,7 @@ import (
 const PROMPT = ">>> "
 
 func Start(in io.Reader, out io.Writer) {
+	file.SetFileName("STDIN")
 	scanner := bufio.NewScanner(in)
 	env := object.NewEnvironment()
 
