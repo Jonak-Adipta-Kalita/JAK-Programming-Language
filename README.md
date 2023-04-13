@@ -35,8 +35,8 @@ and hit Enter.
 Open a terminal in the Directory. Now type:
 
 ```bash
-go build main.go
-main.exe
+go build .
+JAK-Programming-Language.exe
 ```
 
 and hit Enter. This will start the Language
@@ -46,7 +46,7 @@ and hit Enter. This will start the Language
 Open a terminal in the Directory. Now type:
 
 ```bash
-main.exe example.jak
+JAK-Programming-Language.exe example/helloWorld.jak
 ```
 
 and hit Enter.
