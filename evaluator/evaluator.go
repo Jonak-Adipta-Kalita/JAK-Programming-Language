@@ -53,11 +53,13 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		}
 		return &object.ReturnValue{Value: val}
 	case *ast.VarStatement:
-		val := Eval(node.Value, env)
-		if isError(val) {
-			return val
+		res := evalVarStatement(node, env, file.GetFileName(), node.Token.Line)
+		if isError(res) {
+			fmt.Fprintf(os.Stderr, "%s\n", res.Inspect())
+			return NULL
+		} else {
+			return res
 		}
-		env.Set(node.Name.Value, val)
 	case *ast.IntegerLiteral:
 		return &object.Integer{Value: node.Value}
 	case *ast.Boolean:
@@ -551,4 +553,16 @@ func PrintParserErrors(out io.Writer, errors []string) {
 	for _, msg := range errors {
 		io.WriteString(out, "\t"+msg+"\n")
 	}
+}
+
+func evalVarStatement(vs *ast.VarStatement, env *object.Environment, file string, line int) object.Object {
+	val := Eval(vs.Value, env)
+	if isError(val) {
+		return val
+	}
+	if _, ok := env.Get(vs.Name.Value); ok {
+		return newError("Variable `%s` already defined", file, line, vs.Name.Value)
+	}
+	env.Set(vs.Name.Value, val)
+	return NULL
 }
