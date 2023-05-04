@@ -350,7 +350,7 @@ func (p *Parser) ParseProgram() *ast.Program {
 func (p *Parser) parseStatement() ast.Statement {
 	switch p.curToken.Type {
 	case token.VAR:
-		return p.parseVarStatement()
+		return p.parseAssignStatement()
 	case token.RETURN:
 		return p.parseReturnStatement()
 	case token.IMPORT:
@@ -396,8 +396,8 @@ func (p *Parser) registerInfix(tokenType token.TokenType, fn infixParseFn) {
 	p.infixParseFns[tokenType] = fn
 }
 
-func (p *Parser) parseVarStatement() *ast.VarStatement {
-	stmt := &ast.VarStatement{Token: p.curToken}
+func (p *Parser) parseAssignStatement() *ast.AssignStatement {
+	stmt := &ast.AssignStatement{Token: p.curToken}
 	if !p.expectPeek(token.IDENTIFIER) {
 		return nil
 	}

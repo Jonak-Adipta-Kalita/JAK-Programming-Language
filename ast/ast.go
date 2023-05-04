@@ -52,15 +52,15 @@ func (i *Identifier) expressionNode()      {}
 func (i *Identifier) TokenLiteral() string { return i.Token.Literal }
 func (i *Identifier) String() string       { return i.Value }
 
-type VarStatement struct {
+type AssignStatement struct {
 	Token token.Token
 	Name  *Identifier
 	Value Expression
 }
 
-func (vs *VarStatement) statementNode()       {}
-func (vs *VarStatement) TokenLiteral() string { return vs.Token.Literal }
-func (vs *VarStatement) String() string {
+func (vs *AssignStatement) statementNode()       {}
+func (vs *AssignStatement) TokenLiteral() string { return vs.Token.Literal }
+func (vs *AssignStatement) String() string {
 	var out bytes.Buffer
 	out.WriteString(vs.TokenLiteral() + " ")
 	out.WriteString(vs.Name.String())

@@ -12,6 +12,7 @@ import (
 	"github.com/Jonak-Adipta-Kalita/JAK-Programming-Language/lexer"
 	"github.com/Jonak-Adipta-Kalita/JAK-Programming-Language/object"
 	"github.com/Jonak-Adipta-Kalita/JAK-Programming-Language/parser"
+	"github.com/Jonak-Adipta-Kalita/JAK-Programming-Language/token"
 )
 
 var (
@@ -52,8 +53,8 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 			return val
 		}
 		return &object.ReturnValue{Value: val}
-	case *ast.VarStatement:
-		res := evalVarStatement(node, env, file.GetFileName(), node.Token.Line)
+	case *ast.AssignStatement:
+		res := evalAssignStatement(node, env, file.GetFileName(), node.Token.Line)
 		if isError(res) {
 			fmt.Fprintf(os.Stderr, "%s\n", res.Inspect())
 			return NULL
@@ -555,14 +556,17 @@ func PrintParserErrors(out io.Writer, errors []string) {
 	}
 }
 
-func evalVarStatement(vs *ast.VarStatement, env *object.Environment, file string, line int) object.Object {
+func evalAssignStatement(vs *ast.AssignStatement, env *object.Environment, file string, line int) object.Object {
 	val := Eval(vs.Value, env)
 	if isError(val) {
 		return val
 	}
-	if _, ok := env.Get(vs.Name.Value); ok {
-		return newError("Variable `%s` already defined", file, line, vs.Name.Value)
+	if vs.Token.Type == token.VAR {
+		if _, ok := env.Get(vs.Name.Value); ok {
+			return newError("Variable `%s` already defined", file, line, vs.Name.Value)
+		}
 	}
+
 	env.Set(vs.Name.Value, val)
 	return NULL
 }
