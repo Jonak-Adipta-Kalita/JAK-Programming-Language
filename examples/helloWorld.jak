@@ -12,17 +12,23 @@ var helloWorldHash = {
 var helloWorldArray = [helloWorldHash];
 
 if (true) {
-    var helloWorldHash_two = {
+    mut helloWorldArray = append(helloWorldArray, {
         "hello": "Konnichiwa",
         "world": "Sekai"
-    };
-    var helloWorldArray = push(helloWorldArray, helloWorldHash_two);
+    });
 }
 
 var counter = 1;
+var index = 0;
 
 for (counter > 5) {
-    print(HelloWorld(helloWorldArray[1]["hello"], helloWorldArray[1]["world"]));
+    if ((counter % 2) == 0) {
+        mut index = 1;
+    } else {
+        mut index = 0;
+    }
+
+    print(HelloWorld(helloWorldArray[index]["hello"], helloWorldArray[index]["world"]));
     counter++;
 }
 
