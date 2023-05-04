@@ -14,6 +14,7 @@ const (
 	IDENTIFIER = "IDENTIFIER"
 	INT        = "INT"
 	STRING     = "STRING"
+	NULL       = "NULL"
 
 	ASSIGN      = "="
 	PLUS        = "+"
@@ -63,6 +64,7 @@ var keywords = map[string]TokenType{
 	"return": RETURN,
 	"true":   TRUE,
 	"false":  FALSE,
+	"null":   NULL,
 	"for":    FOR,
 	"use":    IMPORT,
 }

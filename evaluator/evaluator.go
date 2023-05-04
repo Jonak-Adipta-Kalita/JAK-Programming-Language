@@ -116,6 +116,8 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		}
 	case *ast.ImportStatement:
 		evalImportStatement(node, env)
+	case *ast.NullLiteral:
+		return NULL
 	}
 	return nil
 }
