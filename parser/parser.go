@@ -351,6 +351,8 @@ func (p *Parser) parseStatement() ast.Statement {
 	switch p.curToken.Type {
 	case token.VAR:
 		return p.parseAssignStatement()
+	case token.MUTATE:
+		return p.parseAssignStatement()
 	case token.RETURN:
 		return p.parseReturnStatement()
 	case token.IMPORT:

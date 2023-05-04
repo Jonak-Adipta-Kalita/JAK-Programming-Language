@@ -561,9 +561,14 @@ func evalAssignStatement(vs *ast.AssignStatement, env *object.Environment, file 
 	if isError(val) {
 		return val
 	}
+
 	if vs.Token.Type == token.VAR {
 		if _, ok := env.Get(vs.Name.Value); ok {
 			return newError("Variable `%s` already defined", file, line, vs.Name.Value)
+		}
+	} else if vs.Token.Type == token.MUTATE {
+		if _, ok := env.Get(vs.Name.Value); !ok {
+			return newError("Variable `%s` not defined", file, line, vs.Name.Value)
 		}
 	}
 
