@@ -51,7 +51,7 @@ var builtins = map[string]*object.Builtin{
 					len(args))
 			}
 			if args[0].Type() != object.ARRAY_OBJ {
-				return newError("argument to `push` must be ARRAY, got %s", file, line,
+				return newError("argument to `append` must be ARRAY, got %s", file, line,
 					args[0].Type())
 			}
 			arr := args[0].(*object.Array)
