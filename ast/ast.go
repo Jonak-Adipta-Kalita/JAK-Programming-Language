@@ -325,10 +325,8 @@ type PostfixExpression struct {
 	Operator string
 }
 
-func (pe *PostfixExpression) expressionNode() {}
-
+func (pe *PostfixExpression) expressionNode()      {}
 func (pe *PostfixExpression) TokenLiteral() string { return pe.Token.Literal }
-
 func (pe *PostfixExpression) String() string {
 	var out bytes.Buffer
 	out.WriteString("(")
