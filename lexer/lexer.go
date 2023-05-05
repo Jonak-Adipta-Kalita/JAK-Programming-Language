@@ -6,6 +6,13 @@ import (
 	"github.com/Jonak-Adipta-Kalita/JAK-Programming-Language/token"
 )
 
+var escapeCharacters = map[string]string{
+	`\n`: "\n",
+	`\t`: "\t",
+	`\r`: "\r",
+	`\"`: "\"",
+}
+
 type Lexer struct {
 	input        string
 	position     int
@@ -203,9 +210,10 @@ func (l *Lexer) readString() string {
 	}
 	out := string(l.input[position:l.position])
 
-	out = strings.Replace(out, `\n`, "\n", -1)
-	out = strings.Replace(out, `\r`, "\r", -1)
-	out = strings.Replace(out, `\t`, "\t", -1)
+	for k, v := range escapeCharacters {
+		out = strings.Replace(out, k, v, -1)
+	}
+
 	return out
 }
 
