@@ -55,6 +55,8 @@ const (
 	TRUE     = "TRUE"
 	FALSE    = "FALSE"
 	FOR      = "FOR"
+	FOREACH  = "FOREACH"
+	IN       = "IN"
 	IMPORT   = "USE"
 	SWITCH   = "SWITCH"
 	CASE     = "CASE"
@@ -73,6 +75,8 @@ var keywords = map[string]TokenType{
 	"false":   FALSE,
 	"null":    NULL,
 	"for":     FOR,
+	"foreach": FOREACH,
+	"in":      IN,
 	"use":     IMPORT,
 	"switch":  SWITCH,
 	"case":    CASE,

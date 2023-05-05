@@ -123,6 +123,8 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		return NULL
 	case *ast.SwitchExpression:
 		return evalSwitchStatement(node, env)
+	case *ast.ForeachStatement:
+		return evalForeachExpression(node, env, file.GetFileName(), node.Token.Line)
 	}
 	return nil
 }
@@ -604,4 +606,32 @@ func evalSwitchStatement(se *ast.SwitchExpression, env *object.Environment) obje
 	}
 
 	return nil
+}
+
+func evalForeachExpression(fle *ast.ForeachStatement, env *object.Environment, file string, line int) object.Object {
+	val := Eval(fle.Value, env)
+
+	helper, ok := val.(object.Iterable)
+	if !ok {
+		return newError("%s object doesn't implement the Iterable interface", file, line, val.Type())
+	}
+
+	child := object.NewEnclosedEnvironment(env)
+
+	helper.Reset()
+
+	ret, idx, ok := helper.Next()
+
+	for ok {
+		child.Set(fle.Ident, ret)
+
+		idxName := fle.Index
+		if idxName != "" {
+			child.Set(fle.Index, idx)
+		}
+		Eval(fle.Body, child)
+		ret, idx, ok = helper.Next()
+	}
+
+	return &object.Null{}
 }

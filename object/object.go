@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"hash/fnv"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/Jonak-Adipta-Kalita/JAK-Programming-Language/ast"
 )
@@ -88,7 +89,24 @@ func (e *Error) Type() ObjectType { return ERROR_OBJ }
 func (e *Error) Inspect() string  { return "ERROR: " + e.Message }
 
 type String struct {
-	Value string
+	Value  string
+	offset int
+}
+
+func (s *String) Reset() {
+	s.offset = 0
+}
+func (s *String) Next() (Object, Object, bool) {
+
+	if s.offset < utf8.RuneCountInString(s.Value) {
+		s.offset++
+		chars := []rune(s.Value)
+		val := &String{Value: string(chars[s.offset-1])}
+
+		return val, &Integer{Value: int64(s.offset - 1)}, true
+	}
+
+	return nil, &Integer{Value: 0}, false
 }
 
 func (s *String) Type() ObjectType { return STRING_OBJ }
@@ -105,6 +123,7 @@ func (b *Builtin) Inspect() string  { return "builtin function" }
 
 type Array struct {
 	Elements []Object
+	offset   int
 }
 
 func (ao *Array) Type() ObjectType { return ARRAY_OBJ }
@@ -118,6 +137,17 @@ func (ao *Array) Inspect() string {
 	out.WriteString(strings.Join(elements, ", "))
 	out.WriteString("]")
 	return out.String()
+}
+func (ao *Array) Reset() { ao.offset = 0 }
+func (ao *Array) Next() (Object, Object, bool) {
+	if ao.offset < len(ao.Elements) {
+		ao.offset++
+
+		element := ao.Elements[ao.offset-1]
+		return element, &Integer{Value: int64(ao.offset - 1)}, true
+	}
+
+	return nil, &Integer{Value: 0}, false
 }
 
 type HashKey struct {
@@ -148,7 +178,27 @@ type HashPair struct {
 	Value Object
 }
 type Hash struct {
-	Pairs map[HashKey]HashPair
+	Pairs  map[HashKey]HashPair
+	offset int
+}
+
+func (h *Hash) Reset() {
+	h.offset = 0
+}
+func (h *Hash) Next() (Object, Object, bool) {
+	if h.offset < len(h.Pairs) {
+		idx := 0
+
+		for _, pair := range h.Pairs {
+			if h.offset == idx {
+				h.offset++
+				return pair.Key, pair.Value, true
+			}
+			idx++
+		}
+	}
+
+	return nil, &Integer{Value: 0}, false
 }
 
 type Hashable interface {
@@ -167,4 +217,9 @@ func (h *Hash) Inspect() string {
 	out.WriteString(strings.Join(pairs, ", "))
 	out.WriteString("}")
 	return out.String()
+}
+
+type Iterable interface {
+	Reset()
+	Next() (Object, Object, bool)
 }

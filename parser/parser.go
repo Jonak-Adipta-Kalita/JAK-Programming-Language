@@ -83,6 +83,7 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerPrefix(token.IF, p.parseIfExpression)
 	p.registerPrefix(token.FUNCTION, p.parseFunctionLiteral)
 	p.registerPrefix(token.FOR, p.parseForLoopExpression)
+	p.registerPrefix(token.FOREACH, p.parseForEach)
 	p.registerPrefix(token.SWITCH, p.parseSwitchStatement)
 
 	p.infixParseFns = make(map[token.TokenType]infixParseFn)
@@ -610,6 +611,42 @@ func (p *Parser) parseSwitchStatement() ast.Expression {
 		return nil
 
 	}
+
+	return expression
+}
+
+func (p *Parser) parseForEach() ast.Expression {
+	expression := &ast.ForeachStatement{Token: p.curToken}
+
+	p.nextToken()
+	expression.Ident = p.curToken.Literal
+
+	if p.peekTokenIs(token.COMMA) {
+		p.nextToken()
+
+		if !p.peekTokenIs(token.IDENTIFIER) {
+			p.errors = append(p.errors, fmt.Sprintf("second argument to foreach must be ident, got %v", p.peekToken))
+			return nil
+		}
+		p.nextToken()
+
+		expression.Index = expression.Ident
+		expression.Ident = p.curToken.Literal
+
+	}
+
+	if !p.expectPeek(token.IN) {
+		return nil
+	}
+	p.nextToken()
+
+	expression.Value = p.parseExpression(LOWEST)
+	if expression.Value == nil {
+		return nil
+	}
+
+	p.nextToken()
+	expression.Body = p.parseBlockStatement()
 
 	return expression
 }
