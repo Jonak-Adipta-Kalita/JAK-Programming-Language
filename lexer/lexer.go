@@ -1,6 +1,8 @@
 package lexer
 
 import (
+	"strings"
+
 	"github.com/Jonak-Adipta-Kalita/JAK-Programming-Language/token"
 )
 
@@ -199,7 +201,12 @@ func (l *Lexer) readString() string {
 			break
 		}
 	}
-	return l.input[position:l.position]
+	out := string(l.input[position:l.position])
+
+	out = strings.Replace(out, `\n`, "\n", -1)
+	out = strings.Replace(out, `\r`, "\r", -1)
+	out = strings.Replace(out, `\t`, "\t", -1)
+	return out
 }
 
 func isDigit(ch byte) bool {
