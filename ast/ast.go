@@ -410,9 +410,7 @@ func (se *SwitchExpression) String() string {
 type ForeachStatement struct {
 	Token token.Token
 	Index string
-
 	Ident string
-
 	Value Expression
 	Body  *BlockStatement
 }
