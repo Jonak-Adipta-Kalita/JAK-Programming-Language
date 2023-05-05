@@ -56,21 +56,27 @@ const (
 	FALSE    = "FALSE"
 	FOR      = "FOR"
 	IMPORT   = "USE"
+	SWITCH   = "SWITCH"
+	CASE     = "CASE"
+	DEFAULT  = "DEFAULT"
 )
 
 var keywords = map[string]TokenType{
-	"func":   FUNCTION,
-	"var":    VAR,
-	"mut":    MUTATE,
-	"if":     IF,
-	"elif":   ELIF,
-	"else":   ELSE,
-	"return": RETURN,
-	"true":   TRUE,
-	"false":  FALSE,
-	"null":   NULL,
-	"for":    FOR,
-	"use":    IMPORT,
+	"func":    FUNCTION,
+	"var":     VAR,
+	"mut":     MUTATE,
+	"if":      IF,
+	"elif":    ELIF,
+	"else":    ELSE,
+	"return":  RETURN,
+	"true":    TRUE,
+	"false":   FALSE,
+	"null":    NULL,
+	"for":     FOR,
+	"use":     IMPORT,
+	"switch":  SWITCH,
+	"case":    CASE,
+	"default": DEFAULT,
 }
 
 func LookupIdent(ident string) TokenType {

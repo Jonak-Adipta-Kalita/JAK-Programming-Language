@@ -360,3 +360,49 @@ type NullLiteral struct {
 func (n *NullLiteral) expressionNode()      {}
 func (n *NullLiteral) TokenLiteral() string { return n.Token.Literal }
 func (n *NullLiteral) String() string       { return n.Token.Literal }
+
+type CaseExpression struct {
+	Token   token.Token
+	Default bool
+	Expr    Expression
+	Block   *BlockStatement
+}
+
+func (ce *CaseExpression) expressionNode()      {}
+func (ce *CaseExpression) TokenLiteral() string { return ce.Token.Literal }
+func (ce *CaseExpression) String() string {
+	var out bytes.Buffer
+
+	if ce.Default {
+		out.WriteString("default ")
+	} else {
+		out.WriteString("case ")
+		out.WriteString(ce.Expr.String())
+	}
+	out.WriteString(ce.Block.String())
+	return out.String()
+}
+
+type SwitchExpression struct {
+	Token   token.Token
+	Value   Expression
+	Choices []*CaseExpression
+}
+
+func (se *SwitchExpression) expressionNode()      {}
+func (se *SwitchExpression) TokenLiteral() string { return se.Token.Literal }
+func (se *SwitchExpression) String() string {
+	var out bytes.Buffer
+	out.WriteString("\nswitch (")
+	out.WriteString(se.Value.String())
+	out.WriteString(")\n{\n")
+
+	for _, tmp := range se.Choices {
+		if tmp != nil {
+			out.WriteString(tmp.String())
+		}
+	}
+	out.WriteString("}\n")
+
+	return out.String()
+}

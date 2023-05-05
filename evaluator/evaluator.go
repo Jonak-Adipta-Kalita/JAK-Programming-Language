@@ -121,6 +121,8 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		evalImportStatement(node, env)
 	case *ast.NullLiteral:
 		return NULL
+	case *ast.SwitchExpression:
+		return evalSwitchStatement(node, env)
 	}
 	return nil
 }
@@ -574,4 +576,32 @@ func evalAssignStatement(vs *ast.AssignStatement, env *object.Environment, file 
 
 	env.Set(vs.Name.Value, val)
 	return NULL
+}
+
+func evalSwitchStatement(se *ast.SwitchExpression, env *object.Environment) object.Object {
+	obj := Eval(se.Value, env)
+
+	for _, opt := range se.Choices {
+		if opt.Default {
+			continue
+		}
+
+		val := Eval(opt.Expr, env)
+
+		if obj.Type() == val.Type() &&
+			(obj.Inspect() == val.Inspect()) {
+
+			out := evalBlockStatement(opt.Block, env)
+			return out
+		}
+	}
+
+	for _, opt := range se.Choices {
+		if opt.Default {
+			out := evalBlockStatement(opt.Block, env)
+			return out
+		}
+	}
+
+	return nil
 }

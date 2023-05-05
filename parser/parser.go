@@ -83,6 +83,7 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerPrefix(token.IF, p.parseIfExpression)
 	p.registerPrefix(token.FUNCTION, p.parseFunctionLiteral)
 	p.registerPrefix(token.FOR, p.parseForLoopExpression)
+	p.registerPrefix(token.SWITCH, p.parseSwitchStatement)
 
 	p.infixParseFns = make(map[token.TokenType]infixParseFn)
 	p.registerInfix(token.PLUS, p.parseInfixExpression)
@@ -528,4 +529,87 @@ func (p *Parser) parseImportStatement() *ast.ImportStatement {
 
 func (p *Parser) parseNull() ast.Expression {
 	return &ast.NullLiteral{Token: p.curToken}
+}
+
+func (p *Parser) parseSwitchStatement() ast.Expression {
+	expression := &ast.SwitchExpression{Token: p.curToken}
+
+	if !p.expectPeek(token.LPAREN) {
+		return nil
+	}
+	p.nextToken()
+	expression.Value = p.parseExpression(LOWEST)
+	if expression.Value == nil {
+		return nil
+	}
+	if !p.expectPeek(token.RPAREN) {
+		return nil
+	}
+
+	if !p.expectPeek(token.LBRACE) {
+		return nil
+	}
+	p.nextToken()
+
+	for !p.curTokenIs(token.RBRACE) {
+		if p.curTokenIs(token.EOF) {
+			p.errors = append(p.errors, "unterminated switch statement")
+			return nil
+		}
+
+		tmp := &ast.CaseExpression{Token: p.curToken}
+
+		if p.curTokenIs(token.DEFAULT) {
+			tmp.Default = true
+
+		} else if p.curTokenIs(token.CASE) {
+			p.nextToken()
+
+			if p.curTokenIs(token.DEFAULT) {
+				tmp.Default = true
+			} else {
+				tmp.Expr = p.parseExpression(LOWEST)
+			}
+		}
+
+		if !p.expectPeek(token.LBRACE) {
+
+			msg := fmt.Sprintf("expected token to be '{', got %s instead", p.curToken.Type)
+			p.errors = append(p.errors, msg)
+			fmt.Printf("error\n")
+			return nil
+		}
+
+		tmp.Block = p.parseBlockStatement()
+
+		if !p.curTokenIs(token.RBRACE) {
+			msg := fmt.Sprintf("Syntax Error: expected token to be '}', got %s instead", p.curToken.Type)
+			p.errors = append(p.errors, msg)
+			fmt.Printf("error\n")
+			return nil
+
+		}
+		p.nextToken()
+
+		expression.Choices = append(expression.Choices, tmp)
+
+	}
+
+	if !p.curTokenIs(token.RBRACE) {
+		return nil
+	}
+
+	count := 0
+	for _, c := range expression.Choices {
+		if c.Default {
+			count++
+		}
+	}
+	if count > 1 {
+		p.errors = append(p.errors, "A switch-statement should only have one default block")
+		return nil
+
+	}
+
+	return expression
 }
