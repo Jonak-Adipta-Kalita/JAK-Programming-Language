@@ -11,6 +11,7 @@ var escapeCharacters = map[string]string{
 	`\t`: "\t",
 	`\r`: "\r",
 	`\"`: "\"",
+	`\\`: "\\",
 }
 
 type Lexer struct {
