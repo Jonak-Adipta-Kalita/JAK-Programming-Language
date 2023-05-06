@@ -24,9 +24,22 @@ var (
 func Eval(node ast.Node, env *object.Environment) object.Object {
 	switch node := node.(type) {
 	case *ast.Program:
-		return evalProgram(node, env)
+		res := evalProgram(node, env)
+		if isError(res) {
+			fmt.Fprintf(os.Stderr, "%s\n", res.Inspect())
+			return NULL
+		} else {
+			return res
+		}
 	case *ast.ExpressionStatement:
-		return Eval(node.Expression, env)
+		res := Eval(node.Expression, env)
+		if isError(res) {
+			fmt.Fprintf(os.Stderr, "%s\n", res.Inspect())
+			return NULL
+		} else {
+			return res
+		}
+
 	case *ast.PrefixExpression:
 		right := Eval(node.Right, env)
 		if isError(right) {
@@ -54,13 +67,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		}
 		return &object.ReturnValue{Value: val}
 	case *ast.AssignStatement:
-		res := evalAssignStatement(node, env, file.GetFileName(), node.Token.Line)
-		if isError(res) {
-			fmt.Fprintf(os.Stderr, "%s\n", res.Inspect())
-			return NULL
-		} else {
-			return res
-		}
+		return evalAssignStatement(node, env, file.GetFileName(), node.Token.Line)
 	case *ast.IntegerLiteral:
 		return &object.Integer{Value: node.Value}
 	case *ast.Boolean:
@@ -110,13 +117,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 	case *ast.ForLoopExpression:
 		return evalForLoopExpression(node, env)
 	case *ast.PostfixExpression:
-		res := evalPostfixExpression(env, node.Operator, node, file.GetFileName(), node.Token.Line)
-		if isError(res) {
-			fmt.Fprintf(os.Stderr, "%s\n", res.Inspect())
-			return NULL
-		} else {
-			return res
-		}
+		return evalPostfixExpression(env, node.Operator, node, file.GetFileName(), node.Token.Line)
 	case *ast.ImportStatement:
 		evalImportStatement(node, env)
 	case *ast.NullLiteral:
@@ -425,6 +426,12 @@ func newError(format, file string, line int, a ...interface{}) *object.Error {
 	return &object.Error{Message: fmt.Sprintf("File: %s: Line: %d: "+format, args...)}
 }
 
+func PrintParserErrors(out io.Writer, errors []string) {
+	for _, msg := range errors {
+		io.WriteString(out, msg+"\n")
+	}
+}
+
 func powInt(x, y int64) int64 {
 	return int64(math.Pow(float64(x), float64(y)))
 }
@@ -567,12 +574,6 @@ func evalImportStatement(is *ast.ImportStatement, env *object.Environment) {
 
 	Eval(program, env)
 	file.SetFileName(file.GetMainFileName())
-}
-
-func PrintParserErrors(out io.Writer, errors []string) {
-	for _, msg := range errors {
-		io.WriteString(out, "\t"+msg+"\n")
-	}
 }
 
 func evalAssignStatement(vs *ast.AssignStatement, env *object.Environment, file string, line int) object.Object {
