@@ -4,12 +4,10 @@ var fizzBuzz = func (number) {
 
     if ((number % 3 == 0) && (number % 5 == 0)) {
         println(fizz, buzz);
-        if (number % 3 == 0) {
-            println(fizz);
-            if (number % 5 == 0) {
-               println(buzz);
-            }
-        }
+    } elif (number % 3 == 0) {
+        println(fizz);
+    } elif (number % 5 == 0) {
+        println(buzz);
     } else {
         println(number);
     }
