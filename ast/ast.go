@@ -173,8 +173,8 @@ func (bs *BlockStatement) String() string {
 }
 
 type ElifExpression struct {
-	Expression     Expression
-	BlockStatement *BlockStatement
+	Condition   Expression
+	Consequence *BlockStatement
 }
 
 type IfExpression struct {
@@ -197,9 +197,9 @@ func (ie *IfExpression) String() string {
 	if ie.Elif != nil {
 		for _, e := range ie.Elif {
 			out.WriteString("elif ")
-			out.WriteString(e.Expression.String())
+			out.WriteString(e.Condition.String())
 			out.WriteString(" ")
-			out.WriteString(e.BlockStatement.String())
+			out.WriteString(e.Consequence.String())
 		}
 	}
 

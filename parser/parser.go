@@ -172,6 +172,24 @@ func (p *Parser) parseIfExpression() ast.Expression {
 
 	expression.Consequence = p.parseBlockStatement()
 
+	for p.peekTokenIs(token.ELIF) {
+		p.nextToken()
+
+		if !p.expectPeek(token.LPAREN) {
+			return nil
+		}
+
+		elifExpression := &ast.ElifExpression{}
+		elifExpression.Condition = p.parseExpression(LOWEST)
+
+		if !p.expectPeek(token.LBRACE) {
+			return nil
+		}
+
+		elifExpression.Consequence = p.parseBlockStatement()
+		expression.Elif = append(expression.Elif, elifExpression)
+	}
+
 	if p.peekTokenIs(token.ELSE) {
 		p.nextToken()
 		if !p.expectPeek(token.LBRACE) {
