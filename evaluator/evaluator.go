@@ -377,6 +377,7 @@ func evalStringInfixExpression(
 
 func evalIfExpression(ie *ast.IfExpression, env *object.Environment) object.Object {
 	condition := Eval(ie.Condition, env)
+
 	if isError(condition) {
 		return condition
 	}
@@ -395,6 +396,7 @@ func evalIfExpression(ie *ast.IfExpression, env *object.Environment) object.Obje
 	} else if ie.Else != nil {
 		return Eval(ie.Else, env)
 	}
+
 	return NULL
 }
 
