@@ -381,20 +381,24 @@ func evalIfExpression(ie *ast.IfExpression, env *object.Environment) object.Obje
 	if isError(condition) {
 		return condition
 	}
+
 	if isTruthy(condition) {
 		return Eval(ie.Consequence, env)
-	} else if ie.Elif != nil {
-		for _, elifExpr := range ie.Elif {
-			elifCondition := Eval(elifExpr.Condition, env)
-			if isError(elifCondition) {
-				return elifCondition
-			}
-			if isTruthy(elifCondition) {
-				return Eval(elifExpr.Consequence, env)
+	} else {
+		if ie.Elif != nil {
+			for _, elifExpr := range ie.Elif {
+				elifCondition := Eval(elifExpr.Condition, env)
+				if isError(elifCondition) {
+					return elifCondition
+				}
+				if isTruthy(elifCondition) {
+					return Eval(elifExpr.Consequence, env)
+				}
 			}
 		}
-	} else if ie.Else != nil {
-		return Eval(ie.Else, env)
+		if ie.Else != nil {
+			return Eval(ie.Else, env)
+		}
 	}
 
 	return NULL
