@@ -382,8 +382,8 @@ func evalIfExpression(ie *ast.IfExpression, env *object.Environment) object.Obje
 	}
 	if isTruthy(condition) {
 		return Eval(ie.Consequence, env)
-	} else if ie.Alternative != nil {
-		return Eval(ie.Alternative, env)
+	} else if ie.Else != nil {
+		return Eval(ie.Else, env)
 	} else {
 		return NULL
 	}

@@ -172,11 +172,17 @@ func (bs *BlockStatement) String() string {
 	return out.String()
 }
 
+type ElifExpression struct {
+	Expression     Expression
+	BlockStatement *BlockStatement
+}
+
 type IfExpression struct {
 	Token       token.Token
 	Condition   Expression
 	Consequence *BlockStatement
-	Alternative *BlockStatement
+	Elif        []*ElifExpression
+	Else        *BlockStatement
 }
 
 func (ie *IfExpression) expressionNode()      {}
@@ -187,10 +193,21 @@ func (ie *IfExpression) String() string {
 	out.WriteString(ie.Condition.String())
 	out.WriteString(" ")
 	out.WriteString(ie.Consequence.String())
-	if ie.Alternative != nil {
-		out.WriteString("else ")
-		out.WriteString(ie.Alternative.String())
+
+	if ie.Elif != nil {
+		for _, e := range ie.Elif {
+			out.WriteString("elif ")
+			out.WriteString(e.Expression.String())
+			out.WriteString(" ")
+			out.WriteString(e.BlockStatement.String())
+		}
 	}
+
+	if ie.Else != nil {
+		out.WriteString("else ")
+		out.WriteString(ie.Else.String())
+	}
+
 	return out.String()
 }
 
