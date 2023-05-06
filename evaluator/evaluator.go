@@ -79,21 +79,29 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		body := node.Body
 		return &object.Function{Parameters: params, Env: env, Body: body}
 	case *ast.CallExpression:
+		if node.Function.TokenLiteral() == "quote" {
+			if len(node.Arguments) != 1 {
+				return newError(
+					"wrong number of arguments. got=%d, want=1",
+					file.GetFileName(),
+					node.Token.Line,
+					len(node.Arguments),
+				)
+			}
+			return quote(node.Arguments[0])
+		}
+
 		function := Eval(node.Function, env)
 		if isError(function) {
 			return function
 		}
+
 		args := evalExpressions(node.Arguments, env)
 		if len(args) == 1 && isError(args[0]) {
 			return args[0]
 		}
-		res := applyFunction(function, args, file.GetFileName(), node.Token.Line)
-		if isError(res) {
-			fmt.Fprintf(os.Stderr, "Error calling `%s` : %s\n", node.Function, res.Inspect())
-			return NULL
-		} else {
-			return res
-		}
+
+		return applyFunction(function, args, file.GetFileName(), node.Token.Line)
 	case *ast.StringLiteral:
 		return &object.String{Value: node.Value}
 	case *ast.ArrayLiteral:
