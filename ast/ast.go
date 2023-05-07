@@ -378,7 +378,7 @@ func (n *NullLiteral) String() string       { return n.Token.Literal }
 
 type CaseExpression struct {
 	Token   token.Token
-	Default bool
+	Default *Boolean
 	Expr    Expression
 	Block   *BlockStatement
 }
@@ -388,7 +388,7 @@ func (ce *CaseExpression) TokenLiteral() string { return ce.Token.Literal }
 func (ce *CaseExpression) String() string {
 	var out bytes.Buffer
 
-	if ce.Default {
+	if ce.Default.Token.Type == token.TRUE {
 		out.WriteString("default ")
 	} else {
 		out.WriteString("case ")
@@ -417,7 +417,7 @@ func (se *SwitchExpression) String() string {
 			out.WriteString(tmp.String())
 		}
 	}
-	out.WriteString("}\n")
+	out.WriteString("\n}\n")
 
 	return out.String()
 }

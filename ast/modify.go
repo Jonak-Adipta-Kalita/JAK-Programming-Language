@@ -37,6 +37,7 @@ func Modify(node Node, modifier ModifierFunc) Node {
 	case *ReturnStatement:
 		node.ReturnValue, _ = Modify(node.ReturnValue, modifier).(Expression)
 	case *AssignStatement:
+		node.Name, _ = Modify(node.Name, modifier).(*Identifier)
 		node.Value, _ = Modify(node.Value, modifier).(Expression)
 	case *FunctionLiteral:
 		for i := range node.Parameters {
@@ -63,7 +64,7 @@ func Modify(node Node, modifier ModifierFunc) Node {
 	case *ImportStatement:
 		node.Path, _ = Modify(node.Path, modifier).(*StringLiteral)
 	case *CaseExpression:
-		// node.Default, _ = Modify(node.Default, modifier).(bool)
+		node.Default, _ = Modify(node.Default, modifier).(*Boolean)
 		node.Expr = Modify(node.Expr, modifier).(Expression)
 		node.Block = Modify(node.Block, modifier).(*BlockStatement)
 	case *SwitchExpression:

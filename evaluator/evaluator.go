@@ -608,7 +608,7 @@ func evalSwitchStatement(se *ast.SwitchExpression, env *object.Environment) obje
 	obj := Eval(se.Value, env)
 
 	for _, opt := range se.Choices {
-		if opt.Default {
+		if opt.Default.Token.Type == token.TRUE {
 			continue
 		}
 
@@ -623,7 +623,7 @@ func evalSwitchStatement(se *ast.SwitchExpression, env *object.Environment) obje
 	}
 
 	for _, opt := range se.Choices {
-		if opt.Default {
+		if opt.Default.Token.Type == token.TRUE {
 			out := evalBlockStatement(opt.Block, env)
 			return out
 		}

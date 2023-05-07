@@ -580,13 +580,13 @@ func (p *Parser) parseSwitchStatement() ast.Expression {
 		tmp := &ast.CaseExpression{Token: p.curToken}
 
 		if p.curTokenIs(token.DEFAULT) {
-			tmp.Default = true
+			tmp.Default = &ast.Boolean{Value: true}
 
 		} else if p.curTokenIs(token.CASE) {
 			p.nextToken()
 
 			if p.curTokenIs(token.DEFAULT) {
-				tmp.Default = true
+				tmp.Default = &ast.Boolean{Value: true}
 			} else {
 				tmp.Expr = p.parseExpression(LOWEST)
 			}
@@ -621,7 +621,7 @@ func (p *Parser) parseSwitchStatement() ast.Expression {
 
 	count := 0
 	for _, c := range expression.Choices {
-		if c.Default {
+		if c.Default.Token.Type == token.TRUE {
 			count++
 		}
 	}
