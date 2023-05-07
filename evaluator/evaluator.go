@@ -647,11 +647,11 @@ func evalForeachExpression(fle *ast.ForeachStatement, env *object.Environment, f
 	ret, idx, ok := helper.Next()
 
 	for ok {
-		child.Set(fle.Ident, ret)
+		child.Set(fle.Identifier.String(), ret)
 
 		idxName := fle.Index
-		if idxName != "" {
-			child.Set(fle.Index, idx)
+		if idxName.String() != "" {
+			child.Set(fle.Index.String(), idx)
 		}
 		Eval(fle.Body, child)
 		ret, idx, ok = helper.Next()

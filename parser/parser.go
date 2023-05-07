@@ -638,7 +638,7 @@ func (p *Parser) parseForEach() ast.Expression {
 	expression := &ast.ForeachStatement{Token: p.curToken}
 
 	p.nextToken()
-	expression.Ident = p.curToken.Literal
+	expression.Identifier = &ast.StringLiteral{Value: p.curToken.Literal}
 
 	if p.peekTokenIs(token.COMMA) {
 		p.nextToken()
@@ -649,8 +649,8 @@ func (p *Parser) parseForEach() ast.Expression {
 		}
 		p.nextToken()
 
-		expression.Index = expression.Ident
-		expression.Ident = p.curToken.Literal
+		expression.Index = expression.Identifier
+		expression.Identifier = &ast.StringLiteral{Value: p.curToken.Literal}
 
 	}
 
