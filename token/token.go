@@ -61,6 +61,7 @@ const (
 	SWITCH   = "SWITCH"
 	CASE     = "CASE"
 	DEFAULT  = "DEFAULT"
+	MACRO    = "MACRO"
 )
 
 var keywords = map[string]TokenType{
@@ -81,6 +82,7 @@ var keywords = map[string]TokenType{
 	"switch":  SWITCH,
 	"case":    CASE,
 	"default": DEFAULT,
+	"macro":   MACRO,
 }
 
 func LookupIdent(ident string) TokenType {

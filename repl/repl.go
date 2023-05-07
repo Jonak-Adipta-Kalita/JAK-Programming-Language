@@ -18,6 +18,7 @@ func Start(in io.Reader, out io.Writer) {
 	file.SetFileName("STDIN")
 	scanner := bufio.NewScanner(in)
 	env := object.NewEnvironment()
+	macroEnv := object.NewEnvironment()
 
 	for {
 		fmt.Print(PROMPT)
@@ -37,6 +38,9 @@ func Start(in io.Reader, out io.Writer) {
 			continue
 		}
 
-		evaluator.Eval(program, env)
+		evaluator.DefineMacros(program, macroEnv)
+		expanded := evaluator.ExpandMacros(program, macroEnv)
+
+		evaluator.Eval(expanded, env)
 	}
 }

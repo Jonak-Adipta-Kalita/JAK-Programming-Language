@@ -28,6 +28,7 @@ func main() {
 		}
 
 		env := object.NewEnvironment()
+		macroEnv := object.NewEnvironment()
 
 		l := lexer.New(string(contents))
 		p := parser.New(l)
@@ -38,6 +39,9 @@ func main() {
 			return
 		}
 
-		evaluator.Eval(program, env)
+		evaluator.DefineMacros(program, macroEnv)
+		expanded := evaluator.ExpandMacros(program, macroEnv)
+
+		evaluator.Eval(expanded, env)
 	}
 }
