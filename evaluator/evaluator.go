@@ -125,7 +125,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 	case *ast.ForLoopExpression:
 		return evalForLoopExpression(node, env)
 	case *ast.PostfixExpression:
-		return evalPostfixExpression(env, node.Operator, node, file.GetFileName(), node.Token.Line)
+		return evalPostfixExpression(env, node.Operator.String(), node, file.GetFileName(), node.Token.Line)
 	case *ast.ImportStatement:
 		evalImportStatement(node, env)
 	case *ast.NullLiteral:

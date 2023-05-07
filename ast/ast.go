@@ -339,7 +339,7 @@ func (fle *ForLoopExpression) String() string {
 
 type PostfixExpression struct {
 	Token    token.Token
-	Operator string
+	Operator *StringLiteral
 }
 
 func (pe *PostfixExpression) expressionNode()      {}
@@ -348,7 +348,7 @@ func (pe *PostfixExpression) String() string {
 	var out bytes.Buffer
 	out.WriteString("(")
 	out.WriteString(pe.Token.Literal)
-	out.WriteString(pe.Operator)
+	out.WriteString(pe.Operator.String())
 	out.WriteString(")")
 	return out.String()
 }

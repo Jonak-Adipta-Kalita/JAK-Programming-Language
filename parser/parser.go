@@ -325,7 +325,7 @@ func (p *Parser) parseExpression(precedence int) ast.Expression {
 func (p *Parser) parsePostfixExpression() ast.Expression {
 	expression := &ast.PostfixExpression{
 		Token:    p.prevToken,
-		Operator: p.curToken.Literal,
+		Operator: &ast.StringLiteral{Value: p.curToken.Literal},
 	}
 	return expression
 }
