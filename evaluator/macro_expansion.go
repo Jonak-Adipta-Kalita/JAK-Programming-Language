@@ -62,6 +62,7 @@ func ExpandMacros(program ast.Node, env *object.Environment) ast.Node {
 		return quote.Node
 	})
 }
+
 func isMacroCall(
 	exp *ast.CallExpression,
 	env *object.Environment,
