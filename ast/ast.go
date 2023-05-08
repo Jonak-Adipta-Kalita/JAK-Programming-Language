@@ -463,3 +463,12 @@ func (ml *MacroLiteral) String() string {
 	out.WriteString(ml.Body.String())
 	return out.String()
 }
+
+type FloatLiteral struct {
+	Token token.Token
+	Value float64
+}
+
+func (fl *FloatLiteral) expressionNode()      {}
+func (fl *FloatLiteral) TokenLiteral() string { return fl.Token.Literal }
+func (fl *FloatLiteral) String() string       { return fl.Token.Literal }

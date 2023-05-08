@@ -134,6 +134,8 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		return evalSwitchStatement(node, env)
 	case *ast.ForeachStatement:
 		return evalForeachExpression(node, env, file.GetFileName(), node.Token.Line)
+	case *ast.FloatLiteral:
+		return &object.Float{Value: node.Value}
 	}
 	return nil
 }
@@ -258,8 +260,9 @@ func evalInfixExpression(
 	line int,
 ) object.Object {
 	switch {
-	case left.Type() == object.INTEGER_OBJ && right.Type() == object.INTEGER_OBJ:
-		return evalIntegerInfixExpression(operator, left, right, file, line)
+	case (left.Type() == object.INTEGER_OBJ || left.Type() == object.FLOAT_OBJ) &&
+		(right.Type() == object.INTEGER_OBJ || right.Type() == object.FLOAT_OBJ):
+		return evalIntegerOrFloatInfixExpression(operator, left, right, file, line)
 	case left.Type() == object.STRING_OBJ && right.Type() == object.STRING_OBJ:
 		return evalStringInfixExpression(operator, left, right, file, line)
 	case operator == "==":
@@ -293,11 +296,14 @@ func evalBangOperatorExpression(right object.Object) object.Object {
 }
 
 func evalMinusPrefixOperatorExpression(right object.Object, file string, line int) object.Object {
-	if right.Type() != object.INTEGER_OBJ {
+	switch obj := right.(type) {
+	case *object.Integer:
+		return &object.Integer{Value: -obj.Value}
+	case *object.Float:
+		return &object.Float{Value: -obj.Value}
+	default:
 		return newError("unknown operator: -%s", file, line, right.Type())
 	}
-	value := right.(*object.Integer).Value
-	return &object.Integer{Value: -value}
 }
 
 func coerceObjectToNativeBool(o object.Object) bool {
@@ -323,7 +329,7 @@ func coerceObjectToNativeBool(o object.Object) bool {
 	}
 }
 
-func evalIntegerInfixExpression(
+func evalIntegerOrFloatInfixExpression(
 	operator string,
 	left, right object.Object,
 	file string,

@@ -92,6 +92,7 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerInfix(token.MINUS, p.parseInfixExpression)
 	p.registerInfix(token.SLASH, p.parseInfixExpression)
 	p.registerInfix(token.ASTERISK, p.parseInfixExpression)
+	p.registerPrefix(token.FLOAT, p.parseFloatLiteral)
 	p.registerInfix(token.MODULO, p.parseInfixExpression)
 	p.registerInfix(token.AND, p.parseInfixExpression)
 	p.registerInfix(token.OR, p.parseInfixExpression)
@@ -682,4 +683,16 @@ func (p *Parser) parseMacroLiteral() ast.Expression {
 	}
 	lit.Body = p.parseBlockStatement()
 	return lit
+}
+
+func (p *Parser) parseFloatLiteral() ast.Expression {
+	flo := &ast.FloatLiteral{Token: p.curToken}
+	value, err := strconv.ParseFloat(p.curToken.Literal, 64)
+	if err != nil {
+		msg := fmt.Sprintf("could not parse %q as float", p.curToken.Literal)
+		p.errors = append(p.errors, msg)
+		return nil
+	}
+	flo.Value = value
+	return flo
 }

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"hash/fnv"
+	"strconv"
 	"strings"
 	"unicode/utf8"
 
@@ -19,6 +20,7 @@ type Object interface {
 
 const (
 	INTEGER_OBJ = "INTEGER"
+	FLOAT_OBJ   = "FLOAT"
 	STRING_OBJ  = "STRING"
 	BOOLEAN_OBJ = "BOOLEAN"
 	ARRAY_OBJ   = "ARRAY"
@@ -256,3 +258,10 @@ func (m *Macro) Inspect() string {
 	out.WriteString("\n}")
 	return out.String()
 }
+
+type Float struct {
+	Value float64
+}
+
+func (f *Float) Inspect() string  { return strconv.FormatFloat(f.Value, 'f', -1, 64) }
+func (f *Float) Type() ObjectType { return FLOAT_OBJ }

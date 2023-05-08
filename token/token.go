@@ -13,6 +13,7 @@ const (
 
 	IDENTIFIER = "IDENTIFIER"
 	INT        = "INT"
+	FLOAT      = "FLOAT"
 	STRING     = "STRING"
 	NULL       = "NULL"
 
@@ -38,6 +39,7 @@ const (
 	COMMA     = ","
 	SEMICOLON = ";"
 	COLON     = ":"
+	DOT       = "."
 	LPAREN    = "("
 	RPAREN    = ")"
 	LBRACE    = "{"
