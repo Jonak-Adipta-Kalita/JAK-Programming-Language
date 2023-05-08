@@ -260,9 +260,14 @@ func evalInfixExpression(
 	line int,
 ) object.Object {
 	switch {
-	case (left.Type() == object.INTEGER_OBJ || left.Type() == object.FLOAT_OBJ) &&
-		(right.Type() == object.INTEGER_OBJ || right.Type() == object.FLOAT_OBJ):
-		return evalIntegerOrFloatInfixExpression(operator, left, right, file, line)
+	case left.Type() == object.INTEGER_OBJ && right.Type() == object.INTEGER_OBJ:
+		return evalIntegerInfixExpression(operator, left, right, file, line)
+	case left.Type() == object.FLOAT_OBJ && right.Type() == object.FLOAT_OBJ:
+		return evalFloatInfixExpression(operator, left, right, file, line)
+	case left.Type() == object.FLOAT_OBJ && right.Type() == object.INTEGER_OBJ:
+		return evalFloatIntegerInfixExpression(operator, left, right, file, line)
+	case left.Type() == object.INTEGER_OBJ && right.Type() == object.FLOAT_OBJ:
+		return evalIntegerFloatInfixExpression(operator, left, right, file, line)
 	case left.Type() == object.STRING_OBJ && right.Type() == object.STRING_OBJ:
 		return evalStringInfixExpression(operator, left, right, file, line)
 	case operator == "==":
@@ -329,7 +334,7 @@ func coerceObjectToNativeBool(o object.Object) bool {
 	}
 }
 
-func evalIntegerOrFloatInfixExpression(
+func evalIntegerInfixExpression(
 	operator string,
 	left, right object.Object,
 	file string,
@@ -365,6 +370,114 @@ func evalIntegerOrFloatInfixExpression(
 	default:
 		return newError("unknown operator: %s %s %s", file, line,
 			left.Type(), operator, right.Type())
+	}
+}
+
+func evalFloatInfixExpression(operator string, left, right object.Object, file string, line int) object.Object {
+	leftVal := left.(*object.Float).Value
+	rightVal := right.(*object.Float).Value
+	switch operator {
+	case "+":
+		return &object.Float{Value: leftVal + rightVal}
+	case "-":
+		return &object.Float{Value: leftVal - rightVal}
+	case "*":
+		return &object.Float{Value: leftVal * rightVal}
+	case "/":
+		return &object.Float{Value: leftVal / rightVal}
+	case "<":
+		return nativeBoolToBooleanObject(leftVal < rightVal)
+	case ">":
+		return nativeBoolToBooleanObject(leftVal > rightVal)
+	case "==":
+		return nativeBoolToBooleanObject(leftVal == rightVal)
+	case "!=":
+		return nativeBoolToBooleanObject(leftVal != rightVal)
+	case "<=":
+		return nativeBoolToBooleanObject(leftVal <= rightVal)
+	case ">=":
+		return nativeBoolToBooleanObject(leftVal >= rightVal)
+	default:
+		return newError(
+			"unknown operator: %s %s %s",
+			file,
+			line,
+			left.Type(),
+			operator,
+			right.Type(),
+		)
+	}
+}
+
+func evalFloatIntegerInfixExpression(operator string, left, right object.Object, file string, line int) object.Object {
+	leftVal := left.(*object.Float).Value
+	rightVal := float64(right.(*object.Integer).Value)
+	switch operator {
+	case "+":
+		return &object.Float{Value: leftVal + rightVal}
+	case "-":
+		return &object.Float{Value: leftVal - rightVal}
+	case "*":
+		return &object.Float{Value: leftVal * rightVal}
+	case "/":
+		return &object.Float{Value: leftVal / rightVal}
+	case "<":
+		return nativeBoolToBooleanObject(leftVal < rightVal)
+	case ">":
+		return nativeBoolToBooleanObject(leftVal > rightVal)
+	case "==":
+		return nativeBoolToBooleanObject(leftVal == rightVal)
+	case "!=":
+		return nativeBoolToBooleanObject(leftVal != rightVal)
+	case "<=":
+		return nativeBoolToBooleanObject(leftVal <= rightVal)
+	case ">=":
+		return nativeBoolToBooleanObject(leftVal >= rightVal)
+	default:
+		return newError(
+			"unknown operator: %s %s %s",
+			file,
+			line,
+			left.Type(),
+			operator,
+			right.Type(),
+		)
+	}
+}
+
+func evalIntegerFloatInfixExpression(operator string, left, right object.Object, file string, line int) object.Object {
+	leftVal := float64(left.(*object.Integer).Value)
+	rightVal := right.(*object.Float).Value
+	switch operator {
+	case "+":
+		return &object.Float{Value: leftVal + rightVal}
+	case "-":
+		return &object.Float{Value: leftVal - rightVal}
+	case "*":
+		return &object.Float{Value: leftVal * rightVal}
+	case "/":
+		return &object.Float{Value: leftVal / rightVal}
+	case "<":
+		return nativeBoolToBooleanObject(leftVal < rightVal)
+	case ">":
+		return nativeBoolToBooleanObject(leftVal > rightVal)
+	case "==":
+		return nativeBoolToBooleanObject(leftVal == rightVal)
+	case "!=":
+		return nativeBoolToBooleanObject(leftVal != rightVal)
+	case "<=":
+		return nativeBoolToBooleanObject(leftVal <= rightVal)
+	case ">=":
+		return nativeBoolToBooleanObject(leftVal >= rightVal)
+	default:
+		return newError(
+			"unknown operator: %s %s %s",
+			file,
+			line,
+			left.Type(),
+			operator,
+			right.Type(),
+		)
 	}
 }
 
