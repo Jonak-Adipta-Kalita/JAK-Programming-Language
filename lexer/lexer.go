@@ -6,12 +6,12 @@ import (
 	"github.com/Jonak-Adipta-Kalita/JAK-Programming-Language/token"
 )
 
-var escapeCharacters = map[string]string{
-	`\n`: "\n",
-	`\t`: "\t",
-	`\r`: "\r",
-	`\"`: "\"",
-	`\\`: "\\",
+var escapeCharacters = map[byte]byte{
+	'n':  '\n',
+	't':  '\t',
+	'r':  '\r',
+	'"':  '"',
+	'\\': '\\',
 }
 
 type Lexer struct {
@@ -139,8 +139,8 @@ func (l *Lexer) NextToken() token.Token {
 	case ']':
 		tok = newToken(token.RBRACKET, l.line, l.ch)
 	case '"':
-		tok.Type = token.STRING
 		tok.Literal = l.readString()
+		tok.Type = token.STRING
 	case ':':
 		tok = newToken(token.COLON, l.line, l.ch)
 	case '^':
@@ -202,20 +202,29 @@ func (l *Lexer) readNumber() string {
 }
 
 func (l *Lexer) readString() string {
-	position := l.position + 1
+	l.position++
+	var escaped strings.Builder
 	for {
 		l.readChar()
 		if l.ch == '"' || l.ch == 0 {
 			break
 		}
-	}
-	out := string(l.input[position:l.position])
 
-	for k, v := range escapeCharacters {
-		out = strings.Replace(out, k, v, -1)
+		if l.ch == '\\' {
+			l.readChar()
+
+			if escapedChar, ok := escapeCharacters[byte(l.ch)]; ok {
+				escaped.WriteByte(escapedChar)
+			} else {
+				escaped.WriteByte('\\')
+				escaped.WriteByte(byte(l.ch))
+			}
+		} else {
+			escaped.WriteByte(byte(l.ch))
+		}
 	}
 
-	return out
+	return escaped.String()
 }
 
 func isDigit(ch byte) bool {
