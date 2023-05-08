@@ -10,7 +10,7 @@ var madlib = func() {
     var food_two = input("Enter a food name: ")
     var thing_two = input("Enter a thing name: ")
 
-    "Today we picked apple from " + person + "'s Orchard. I had no idea there were so many different varieties of apples. I ate " + color + " apples straight off the tree that tested like " + food + ". Then there was a " + adjective + " apple that looked like a " + thing + ". When our bag were full, we went on a free hay ride to " + place + " and back. It ended at a hay pile where we got to " + verb + " " + adverb + ". I can hardly wait to get home and cook with the apples. We are going to make appple " + food_two + " and " + thing_two + " pies!"
+    "Today we picked apple from " + person + "'s Orchard. I had no idea there were so many different varieties of apples. I ate " + color + " apples straight off the tree that tasted like " + food + ". Then there was a " + adjective + " apple that looked like a " + thing + ". When our bags were full, we went on a free hay ride to " + place + " and back. It ended at a hay pile where we got to " + verb + " " + adverb + ". I can hardly wait to get home and cook with the apples. We are going to make appple " + food_two + " and " + thing_two + " pies!"
 }
 
 print(madlib())
