@@ -226,8 +226,31 @@ var builtins = map[string]*object.Builtin{
 					return newError("could not convert string to integer", file, line)
 				}
 				return &object.Integer{Value: integer}
+			case *object.Float:
+				return &object.Integer{Value: int64(arg.Value)}
 			default:
 				return newError("argument to `int` not supported, got %s", file, line, args[0].Type())
+			}
+		},
+	},
+	"float": {
+		Fn: func(file string, line int, args ...object.Object) object.Object {
+			if len(args) != 1 {
+				return newError("wrong number of arguments. got=%d, want=1", file, line, len(args))
+			}
+			switch arg := args[0].(type) {
+			case *object.Integer:
+				return &object.Float{Value: float64(arg.Value)}
+			case *object.Float:
+				return arg
+			case *object.String:
+				float, err := strconv.ParseFloat(arg.Value, 64)
+				if err != nil {
+					return newError("could not convert string to float", file, line)
+				}
+				return &object.Float{Value: float}
+			default:
+				return newError("argument to `float` not supported, got %s", file, line, args[0].Type())
 			}
 		},
 	},
@@ -239,6 +262,8 @@ var builtins = map[string]*object.Builtin{
 			switch arg := args[0].(type) {
 			case *object.Integer:
 				return &object.String{Value: strconv.FormatInt(arg.Value, 10)}
+			case *object.Float:
+				return &object.String{Value: strconv.FormatFloat(arg.Value, 'f', -1, 64)}
 			case *object.String:
 				return arg
 			default:
