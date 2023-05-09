@@ -108,6 +108,7 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerInfix(token.LPAREN, p.parseCallExpression)
 	p.registerPrefix(token.LBRACKET, p.parseArrayLiteral)
 	p.registerInfix(token.LBRACKET, p.parseIndexExpression)
+	p.registerInfix(token.DOT, p.parseMethodCallExpression)
 	p.registerPrefix(token.LBRACE, p.parseHashLiteral)
 
 	p.postfixParseFns = make(map[token.TokenType]postfixParseFn)
@@ -695,4 +696,15 @@ func (p *Parser) parseFloatLiteral() ast.Expression {
 	}
 	flo.Value = value
 	return flo
+}
+
+func (p *Parser) parseMethodCallExpression(obj ast.Expression) ast.Expression {
+	methodCall := &ast.ObjectCallExpression{Token: p.curToken, Object: obj}
+
+	p.nextToken()
+	name := p.parseIdentifier()
+
+	p.nextToken()
+	methodCall.Call = p.parseCallExpression(name)
+	return methodCall
 }

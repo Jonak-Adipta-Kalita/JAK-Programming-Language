@@ -136,6 +136,12 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		return evalForeachExpression(node, env, file.GetFileName(), node.Token.Line)
 	case *ast.FloatLiteral:
 		return &object.Float{Value: node.Value}
+	case *ast.ObjectCallExpression:
+		res := evalObjectCallExpression(node, env, file.GetFileName(), node.Token.Line)
+		if isError(res) {
+			fmt.Fprintf(os.Stderr, "Error calling object-method %s\n", res.Inspect())
+		}
+		return res
 	}
 	return nil
 }
@@ -777,4 +783,18 @@ func evalForeachExpression(fle *ast.ForeachStatement, env *object.Environment, f
 	}
 
 	return &object.Null{}
+}
+
+func evalObjectCallExpression(call *ast.ObjectCallExpression, env *object.Environment, file string, line int) object.Object {
+
+	obj := Eval(call.Object, env)
+	if method, ok := call.Call.(*ast.CallExpression); ok {
+		args := evalExpressions(call.Call.(*ast.CallExpression).Arguments, env)
+		ret := obj.InvokeMethod(method.Function.String(), args...)
+		if ret != nil {
+			return ret
+		}
+	}
+
+	return newError("Failed to invoke method: %s", file, line, call.Call.(*ast.CallExpression).Function.String())
 }
