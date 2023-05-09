@@ -8,18 +8,6 @@ import (
 	"github.com/Jonak-Adipta-Kalita/JAK-Programming-Language/object"
 )
 
-func extractArgIndex(format string, startIndex int) (int, int) {
-	argIndex := 0
-	for i := startIndex; i < len(format); i++ {
-		if '0' <= format[i] && format[i] <= '9' {
-			argIndex = argIndex*10 + int(format[i]-'0')
-		} else {
-			return argIndex, i - 1
-		}
-	}
-	return argIndex, len(format) - 1
-}
-
 var builtins = map[string]*object.Builtin{
 	"first": {
 		Fn: func(file string, line int, args ...object.Object) object.Object {
@@ -189,12 +177,21 @@ var builtins = map[string]*object.Builtin{
 	},
 	"format": {
 		Fn: func(file string, line int, args ...object.Object) object.Object {
+			if len(args) < 1 {
+				return newError("wrong number of arguments. got=%d, want=1(atleast)", file, line, len(args))
+			}
 			if args[0].Type() != object.STRING_OBJ {
 				return newError("argument to `format` must be STRING, got %s", file, line, args[0].Type())
 			}
 
-			formattedString := ""
-			// stringToFormat := args[0].(*object.String).Value
+			formatString := args[0].(*object.String).Value
+			formattedArgs := make([]interface{}, len(args)-1)
+
+			for i, arg := range args[1:] {
+				formattedArgs[i] = arg.Inspect()
+			}
+
+			formattedString := fmt.Sprintf(formatString, formattedArgs...)
 
 			return &object.String{Value: formattedString}
 		},
