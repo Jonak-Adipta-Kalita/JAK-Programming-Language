@@ -47,19 +47,12 @@ type Boolean struct {
 func (b *Boolean) Type() ObjectType { return BOOLEAN_OBJ }
 func (b *Boolean) Inspect() string  { return fmt.Sprintf("%t", b.Value) }
 func (b *Boolean) InvokeMethod(method string, args ...Object) Object {
-	if method == "methods" {
-		names := []string{"methods", "string"}
-
-		result := make([]Object, len(names))
-		for i, txt := range names {
-			result[i] = &String{Value: txt}
-		}
-		return &Array{Elements: result}
-	}
-	if method == "string" {
+	switch method {
+	case "string":
 		return &String{Value: b.Inspect()}
+	default:
+		return nil
 	}
-	return nil
 }
 
 type Integer struct {
@@ -69,19 +62,6 @@ type Integer struct {
 func (i *Integer) Inspect() string  { return fmt.Sprintf("%d", i.Value) }
 func (i *Integer) Type() ObjectType { return INTEGER_OBJ }
 func (i *Integer) InvokeMethod(method string, args ...Object) Object {
-
-	if method == "methods" {
-		names := []string{"methods", "string"}
-
-		result := make([]Object, len(names))
-		for i, txt := range names {
-			result[i] = &String{Value: txt}
-		}
-		return &Array{Elements: result}
-	}
-	if method == "string" {
-		return &String{Value: i.Inspect()}
-	}
 	return nil
 }
 
@@ -143,9 +123,6 @@ type String struct {
 	offset int
 }
 
-func (s *String) Reset() {
-	s.offset = 0
-}
 func (s *String) Next() (Object, Object, bool) {
 
 	if s.offset < utf8.RuneCountInString(s.Value) {
@@ -158,46 +135,31 @@ func (s *String) Next() (Object, Object, bool) {
 
 	return nil, &Integer{Value: 0}, false
 }
-
+func (s *String) Reset()           { s.offset = 0 }
 func (s *String) Type() ObjectType { return STRING_OBJ }
 func (s *String) Inspect() string  { return s.Value }
 func (s *String) InvokeMethod(method string, args ...Object) Object {
-	if method == "count" {
+	switch method {
+	case "count":
 		if len(args) < 1 {
 			return &Error{Message: "Missing argument to count()!"}
 		}
 		arg := args[0].Inspect()
 		return &Integer{Value: int64(strings.Count(s.Value, arg))}
-	}
-	if method == "find" {
+	case "find":
 		if len(args) < 1 {
 			return &Error{Message: "Missing argument to find()!"}
 		}
-
 		arg := args[0].Inspect()
 		return &Integer{Value: int64(strings.Index(s.Value, arg))}
-	}
-	if method == "len" {
-		return &Integer{Value: int64(utf8.RuneCountInString(s.Value))}
-	}
-	if method == "methods" {
-		names := []string{"count", "find", "len", "methods", "replace", "reverse", "split", "toupper", "tolower", "type"}
-
-		result := make([]Object, len(names))
-		for i, txt := range names {
-			result[i] = &String{Value: txt}
-		}
-		return &Array{Elements: result}
-	}
-	if method == "replace" {
+	case "replace":
 		if len(args) < 2 {
 			return &Error{Message: "Missing arguments to replace()!"}
 		}
 		oldS := args[0].Inspect()
 		newS := args[1].Inspect()
 		return &String{Value: strings.Replace(s.Value, oldS, newS, -1)}
-	}
-	if method == "reverse" {
+	case "reverse":
 		out := make([]rune, utf8.RuneCountInString(s.Value))
 		i := len(out)
 		for _, c := range s.Value {
@@ -205,37 +167,27 @@ func (s *String) InvokeMethod(method string, args ...Object) Object {
 			out[i] = c
 		}
 		return &String{Value: string(out)}
-	}
-	if method == "split" {
+	case "split":
 		sep := " "
-
 		if len(args) >= 1 {
 			sep = args[0].(*String).Value
 		}
-
 		fields := strings.Split(s.Value, sep)
-
 		l := len(fields)
 		result := make([]Object, l)
 		for i, txt := range fields {
 			result[i] = &String{Value: txt}
 		}
 		return &Array{Elements: result}
-
-	}
-	if method == "trim" {
+	case "trim":
 		return &String{Value: strings.TrimSpace(s.Value)}
-	}
-	if method == "tolower" {
+	case "toLower":
 		return &String{Value: strings.ToLower(s.Value)}
-	}
-	if method == "toupper" {
+	case "toUpper":
 		return &String{Value: strings.ToUpper(s.Value)}
+	default:
+		return nil
 	}
-	if method == "type" {
-		return &String{Value: "string"}
-	}
-	return nil
 }
 
 type BuiltinFunction func(file string, line int, args ...Object) Object
@@ -247,15 +199,6 @@ type Builtin struct {
 func (b *Builtin) Type() ObjectType { return BUILTIN_OBJ }
 func (b *Builtin) Inspect() string  { return "builtin function" }
 func (b *Builtin) InvokeMethod(method string, args ...Object) Object {
-	if method == "methods" {
-		names := []string{"methods"}
-
-		result := make([]Object, len(names))
-		for i, txt := range names {
-			result[i] = &String{Value: txt}
-		}
-		return &Array{Elements: result}
-	}
 	return nil
 }
 
@@ -288,7 +231,8 @@ func (ao *Array) Next() (Object, Object, bool) {
 	return nil, &Integer{Value: 0}, false
 }
 func (ao *Array) InvokeMethod(method string, args ...Object) Object {
-	if method == "find" {
+	switch method {
+	case "find":
 		if len(args) < 1 {
 			return &Error{Message: "Missing argument to find()!"}
 		}
@@ -297,28 +241,17 @@ func (ao *Array) InvokeMethod(method string, args ...Object) Object {
 		arg := args[0].Inspect()
 		result := -1
 		for idx, entry := range ao.Elements {
-			if (entry.Type() == STRING_OBJ) && (entry.(*String).Value == arg) {
-				result = idx
+			if entry.Type() == STRING_OBJ {
+				if entry.(*String).Value == arg {
+					result = idx
+					break
+				}
 			}
 		}
 		return &Integer{Value: int64(result)}
+	default:
+		return nil
 	}
-	if method == "len" {
-		return &Integer{Value: int64(len(ao.Elements))}
-	}
-	if method == "methods" {
-		names := []string{"find", "len", "methods", "string"}
-
-		result := make([]Object, len(names))
-		for i, txt := range names {
-			result[i] = &String{Value: txt}
-		}
-		return &Array{Elements: result}
-	}
-	if method == "string" {
-		return &String{Value: ao.Inspect()}
-	}
-	return nil
 }
 
 type HashKey struct {
