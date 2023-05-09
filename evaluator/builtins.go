@@ -188,7 +188,14 @@ var builtins = map[string]*object.Builtin{
 			formattedArgs := make([]interface{}, len(args)-1)
 
 			for i, arg := range args[1:] {
-				formattedArgs[i] = arg.Inspect()
+				switch arg := arg.(type) {
+				case *object.Integer:
+					formattedArgs[i] = arg.Value
+				case *object.String:
+					formattedArgs[i] = arg.Value
+				default:
+					return newError("unsupported type for format: %s", file, line, arg.Type())
+				}
 			}
 
 			formattedString := fmt.Sprintf(formatString, formattedArgs...)
