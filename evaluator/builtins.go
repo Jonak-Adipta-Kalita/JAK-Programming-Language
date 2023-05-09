@@ -6,6 +6,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/Jonak-Adipta-Kalita/JAK-Programming-Language/object"
 )
@@ -137,7 +138,7 @@ var builtins = map[string]*object.Builtin{
 			}
 			switch arg := args[0].(type) {
 			case *object.Array:
-				return &object.Integer{Value: int64(len(arg.Elements))}
+				return &object.Integer{Value: int64(utf8.RuneCountInString(arg.Elements))}
 			case *object.String:
 				return &object.Integer{Value: int64(len(arg.Value))}
 			default:
