@@ -138,9 +138,6 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		return &object.Float{Value: node.Value}
 	case *ast.ObjectCallExpression:
 		res := evalObjectCallExpression(node, env, file.GetFileName(), node.Token.Line)
-		if isError(res) {
-			fmt.Fprintf(os.Stderr, "Error calling object-method %s\n", res.Inspect())
-		}
 		return res
 	}
 	return nil
