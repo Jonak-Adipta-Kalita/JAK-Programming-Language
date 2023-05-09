@@ -36,7 +36,7 @@ func (l *Lexer) readChar() {
 	}
 
 	l.position = l.readPosition
-	l.readPosition += 1
+	l.readPosition++
 }
 
 func (l *Lexer) NextToken() token.Token {
@@ -151,16 +151,13 @@ func (l *Lexer) NextToken() token.Token {
 		tok.Literal = ""
 		tok.Type = token.EOF
 	default:
-		if isLetter(l.ch) {
-			tok.Literal = l.readIdentifier()
-			tok.Type = token.LookupIdent(tok.Literal)
-
-			return tok
-		} else if isDigit(l.ch) {
+		if isDigit(l.ch) {
 			return l.readDecimal()
-		} else {
-			tok = newToken(token.ILLEGAL, l.line, l.ch)
 		}
+
+		tok.Literal = l.readIdentifier()
+		tok.Type = token.LookupIdentifier(tok.Literal)
+		return tok
 	}
 
 	l.readChar()
@@ -172,11 +169,36 @@ func newToken(tokenType token.TokenType, line int, ch byte) token.Token {
 }
 
 func (l *Lexer) readIdentifier() string {
+	id := ""
+
 	position := l.position
+	rposition := l.readPosition
 	for isLetter(l.ch) {
+		id += string(l.ch)
 		l.readChar()
 	}
-	return l.input[position:l.position]
+
+	if strings.Contains(id, ".") {
+
+		if !strings.HasPrefix(id, "directory.") &&
+			!strings.HasPrefix(id, "file.") &&
+			!strings.HasPrefix(id, "math.") &&
+			!strings.HasPrefix(id, "os.") &&
+			!strings.HasPrefix(id, "string.") {
+
+			offset := strings.Index(id, ".")
+			id = id[:offset]
+
+			l.position = position
+			l.readPosition = rposition
+			for offset > 0 {
+				l.readChar()
+				offset--
+			}
+		}
+	}
+
+	return id
 }
 
 func isLetter(ch byte) bool {
@@ -230,6 +252,38 @@ func isDigit(ch byte) bool {
 	return '0' <= ch && ch <= '9'
 }
 
+func isOperator(ch byte) bool {
+	return ch == byte('+') || ch == byte('%') || ch == byte('-') || ch == byte('/') || ch == byte('*')
+}
+
+func isComparison(ch byte) bool {
+	return ch == byte('=') || ch == byte('!') || ch == byte('>') || ch == byte('<')
+}
+
+func isCompound(ch byte) bool {
+	return ch == byte(',') || ch == byte(':') || ch == byte('"') || ch == byte(';')
+}
+
+func isBrace(ch byte) bool {
+	return ch == byte('{') || ch == byte('}')
+}
+
+func isBracket(ch byte) bool {
+	return ch == byte('[') || ch == byte(']')
+}
+
+func isParen(ch byte) bool {
+	return ch == byte('(') || ch == byte(')')
+}
+
+func isEmpty(ch byte) bool {
+	return byte(0) == ch
+}
+
+func isWhitespace(ch byte) bool {
+	return ch == byte(' ') || ch == byte('\t') || ch == byte('\n') || ch == byte('\r')
+}
+
 func (l *Lexer) peekChar() byte {
 	if l.readPosition >= len(l.input) {
 		return 0
@@ -247,11 +301,27 @@ func (l *Lexer) skipSingleLineComment() {
 
 func (l *Lexer) readDecimal() token.Token {
 	integer := l.readNumber()
-	if l.ch != '.' {
-		return token.Token{Type: token.INT, Literal: integer}
-	} else {
+	if l.ch == '.' {
 		l.readChar()
 		fraction := l.readNumber()
-		return token.Token{Type: token.FLOAT, Literal: integer + "." + fraction}
+		if isEmpty(l.ch) || isWhitespace(l.ch) || isOperator(l.ch) || isComparison(l.ch) || isCompound(l.ch) || isBracket(l.ch) || isBrace(l.ch) || isParen(l.ch) {
+			return token.Token{Type: token.FLOAT, Literal: integer + "." + fraction}
+		}
+		illegalPart := l.readUntilWhitespace()
+		return token.Token{Type: token.ILLEGAL, Literal: integer + "." + fraction + illegalPart}
+
+	} else if isEmpty(l.ch) || isWhitespace(l.ch) || isOperator(l.ch) || isComparison(l.ch) || isCompound(l.ch) || isBracket(l.ch) || isBrace(l.ch) || isParen(l.ch) {
+		return token.Token{Type: token.INT, Literal: integer}
+	} else {
+		illegalPart := l.readUntilWhitespace()
+		return token.Token{Type: token.ILLEGAL, Literal: integer + illegalPart}
 	}
+}
+
+func (l *Lexer) readUntilWhitespace() string {
+	position := l.position
+	for !isWhitespace(l.ch) {
+		l.readChar()
+	}
+	return string(l.input[position:l.position])
 }
