@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"hash/fnv"
+	"os"
 	"strconv"
 	"strings"
 	"unicode/utf8"
@@ -35,6 +36,7 @@ const (
 	BUILTIN_OBJ = "BUILTIN"
 	QUOTE_OBJ   = "QUOTE"
 	MACRO_OBJ   = "MACRO"
+	FILE_OBJ    = "FILE"
 )
 
 type Boolean struct {
@@ -265,3 +267,10 @@ type Float struct {
 
 func (f *Float) Inspect() string  { return strconv.FormatFloat(f.Value, 'f', -1, 64) }
 func (f *Float) Type() ObjectType { return FLOAT_OBJ }
+
+type File struct {
+	File *os.File
+}
+
+func (f *File) Inspect() string  { return f.File.Name() }
+func (f *File) Type() ObjectType { return FILE_OBJ }
