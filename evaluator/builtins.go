@@ -337,6 +337,10 @@ var builtins = map[string]*object.Builtin{
 				flag = os.O_WRONLY | os.O_CREATE
 			case "a":
 				flag = os.O_WRONLY | os.O_APPEND | os.O_CREATE
+			case "rw":
+				flag = os.O_RDWR | os.O_CREATE
+			case "ra":
+				flag = os.O_RDWR | os.O_APPEND | os.O_CREATE
 			default:
 				return newError("invalid mode %s", file, line, mode)
 			}
