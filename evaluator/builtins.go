@@ -1,7 +1,6 @@
 package evaluator
 
 import (
-	"bufio"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -397,22 +396,6 @@ var builtins = map[string]*object.Builtin{
 				return newError("could not write to file %s", file, line, fileObj.File.Name())
 			}
 			return NULL
-		},
-	},
-	"readline": {
-		Fn: func(file string, line int, args ...object.Object) object.Object {
-			if len(args) != 1 {
-				return newError("wrong number of arguments. got=%d, want=1", file, line, len(args))
-			}
-			if args[0].Type() != object.FILE_OBJ {
-				return newError("argument to `readline` must be FILE, got %s", file, line, args[0].Type())
-			}
-			fileObj := args[0].(*object.File)
-			content, err := bufio.NewReader(fileObj.File).ReadString('\n')
-			if err != nil {
-				return newError("could not read file %s", file, line, fileObj.File.Name())
-			}
-			return &object.String{Value: content}
 		},
 	},
 	"readlines": {
