@@ -423,4 +423,69 @@ var builtins = map[string]*object.Builtin{
 			return &object.Array{Elements: elements}
 		},
 	},
+
+	"mkdir": {
+		Fn: func(file string, line int, args ...object.Object) object.Object {
+			if len(args) != 1 {
+				return newError("wrong number of arguments. got=%d, want=1", file, line, len(args))
+			}
+			if args[0].Type() != object.STRING_OBJ {
+				return newError("argument to `mkdir` must be STRING, got %s", file, line, args[0].Type())
+			}
+			dirname := args[0].(*object.String).Value
+			err := os.Mkdir(dirname, 0755)
+			if err != nil {
+				return newError("could not create directory %s", file, line, dirname)
+			}
+			return NULL
+		},
+	},
+	"rmdir": {
+		Fn: func(file string, line int, args ...object.Object) object.Object {
+			if len(args) != 1 {
+				return newError("wrong number of arguments. got=%d, want=1", file, line, len(args))
+			}
+			if args[0].Type() != object.STRING_OBJ {
+				return newError("argument to `rmdir` must be STRING, got %s", file, line, args[0].Type())
+			}
+			dirname := args[0].(*object.String).Value
+			err := os.Remove(dirname)
+			if err != nil {
+				return newError("could not remove directory %s", file, line, dirname)
+			}
+			return NULL
+		},
+	},
+	"mkfile": {
+		Fn: func(file string, line int, args ...object.Object) object.Object {
+			if len(args) != 1 {
+				return newError("wrong number of arguments. got=%d, want=1", file, line, len(args))
+			}
+			if args[0].Type() != object.STRING_OBJ {
+				return newError("argument to `mkfile` must be STRING, got %s", file, line, args[0].Type())
+			}
+			filename := args[0].(*object.String).Value
+			fileObj, err := os.Create(filename)
+			if err != nil {
+				return newError("could not create directory %s", file, line, filename)
+			}
+			return &object.File{File: fileObj}
+		},
+	},
+	"rmfile": {
+		Fn: func(file string, line int, args ...object.Object) object.Object {
+			if len(args) != 1 {
+				return newError("wrong number of arguments. got=%d, want=1", file, line, len(args))
+			}
+			if args[0].Type() != object.STRING_OBJ {
+				return newError("argument to `rmfile` must be STRING, got %s", file, line, args[0].Type())
+			}
+			filename := args[0].(*object.String).Value
+			err := os.Remove(filename)
+			if err != nil {
+				return newError("could not remove file %s", file, line, filename)
+			}
+			return NULL
+		},
+	},
 }
