@@ -77,6 +77,9 @@ func Modify(node Node, modifier ModifierFunc) Node {
 		node.Identifier = Modify(node.Value, modifier).(*StringLiteral)
 		node.Value = Modify(node.Value, modifier).(Expression)
 		node.Body = Modify(node.Body, modifier).(*BlockStatement)
+	case *ObjectCallExpression:
+		node.Object = Modify(node.Object, modifier).(Expression)
+		node.Call = Modify(node.Call, modifier).(Expression)
 	}
 	return modifier(node)
 }
