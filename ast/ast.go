@@ -472,3 +472,22 @@ type FloatLiteral struct {
 func (fl *FloatLiteral) expressionNode()      {}
 func (fl *FloatLiteral) TokenLiteral() string { return fl.Token.Literal }
 func (fl *FloatLiteral) String() string       { return fl.Token.Literal }
+
+type ObjectCallExpression struct {
+	Token  token.Token
+	Object Expression
+	Call   Expression
+}
+
+func (oce *ObjectCallExpression) expressionNode() {}
+func (oce *ObjectCallExpression) TokenLiteral() string {
+	return oce.Token.Literal
+}
+func (oce *ObjectCallExpression) String() string {
+	var out bytes.Buffer
+	out.WriteString(oce.Object.String())
+	out.WriteString(".")
+	out.WriteString(oce.Call.String())
+
+	return out.String()
+}
