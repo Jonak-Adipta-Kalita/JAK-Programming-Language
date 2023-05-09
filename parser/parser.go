@@ -42,7 +42,6 @@ var precedences = map[token.TokenType]int{
 	token.MODULO:   MODULO,
 	token.CARET:    CARET,
 	token.LPAREN:   CALL,
-	token.DOT:      CALL,
 	token.LBRACKET: INDEX,
 }
 
