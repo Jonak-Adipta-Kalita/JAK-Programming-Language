@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/Jonak-Adipta-Kalita/JAK-Programming-Language/object"
 )
@@ -178,27 +179,20 @@ var builtins = map[string]*object.Builtin{
 	"format": {
 		Fn: func(file string, line int, args ...object.Object) object.Object {
 			if len(args) < 1 {
-				return newError("wrong number of arguments. got=%d, want=1(atleast)", file, line, len(args))
+				return newError("wrong number of arguments. got=%d, want=1(at least)", file, line, len(args))
 			}
 			if args[0].Type() != object.STRING_OBJ {
 				return newError("argument to `format` must be STRING, got %s", file, line, args[0].Type())
 			}
 
 			formatString := args[0].(*object.String).Value
-			formattedArgs := make([]interface{}, len(args)-1)
+			formattedString := formatString
 
+			// Replace f-string-style expressions with corresponding argument values
 			for i, arg := range args[1:] {
-				switch arg := arg.(type) {
-				case *object.Integer:
-					formattedArgs[i] = arg.Value
-				case *object.String:
-					formattedArgs[i] = arg.Value
-				default:
-					return newError("unsupported type for format: %s", file, line, arg.Type())
-				}
+				replacement := "{" + strconv.Itoa(i) + "}"
+				formattedString = strings.ReplaceAll(formattedString, replacement, arg.Inspect())
 			}
-
-			formattedString := fmt.Sprintf(formatString, formattedArgs...)
 
 			return &object.String{Value: formattedString}
 		},
