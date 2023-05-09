@@ -466,10 +466,11 @@ var builtins = map[string]*object.Builtin{
 			}
 			filename := args[0].(*object.String).Value
 			fileObj, err := os.Create(filename)
+			fileObj.Close()
 			if err != nil {
-				return newError("could not create directory %s", file, line, filename)
+				return newError("could not create file %s", file, line, filename)
 			}
-			return &object.File{File: fileObj}
+			return NULL
 		},
 	},
 	"rmfile": {
