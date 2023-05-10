@@ -151,13 +151,16 @@ func (l *Lexer) NextToken() token.Token {
 		tok.Literal = ""
 		tok.Type = token.EOF
 	default:
-		if isDigit(l.ch) {
-			return l.readDecimal()
-		}
+		if isLetter(l.ch) {
+			tok.Literal = l.readIdentifier()
+			tok.Type = token.LookupIdentifier(tok.Literal)
 
-		tok.Literal = l.readIdentifier()
-		tok.Type = token.LookupIdentifier(tok.Literal)
-		return tok
+			return tok
+		} else if isDigit(l.ch) {
+			return l.readDecimal()
+		} else {
+			tok = newToken(token.ILLEGAL, l.line, l.ch)
+		}
 	}
 
 	l.readChar()
