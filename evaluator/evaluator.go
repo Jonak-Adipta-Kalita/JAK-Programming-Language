@@ -550,7 +550,7 @@ func isTruthy(obj object.Object) bool {
 
 func newError(format, file string, line int, a ...interface{}) *object.Error {
 	args := append([]interface{}{file, line}, a...)
-	return &object.Error{Message: fmt.Sprintf(format, args...), File: file, Line: line}
+	return &object.Error{Message: fmt.Sprintf(format, args...), FileName: file, Line: line}
 }
 
 func PrintParserErrors(out io.Writer, errors []string) {
