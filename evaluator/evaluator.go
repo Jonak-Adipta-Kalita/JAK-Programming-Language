@@ -549,7 +549,7 @@ func isTruthy(obj object.Object) bool {
 }
 
 func newError(format, file string, line int, a ...interface{}) *object.Error {
-	if file == "" {
+	if file == "<stdin>" {
 		return &object.Error{Message: fmt.Sprintf(format, a...)}
 	}
 	args := append([]interface{}{file, line}, a...)
@@ -783,7 +783,6 @@ func evalForeachExpression(fle *ast.ForeachStatement, env *object.Environment, f
 }
 
 func evalObjectCallExpression(call *ast.ObjectCallExpression, env *object.Environment, file string, line int) object.Object {
-
 	obj := Eval(call.Object, env)
 	if method, ok := call.Call.(*ast.CallExpression); ok {
 		args := evalExpressions(call.Call.(*ast.CallExpression).Arguments, env)

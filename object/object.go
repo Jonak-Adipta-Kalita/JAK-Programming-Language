@@ -109,16 +109,6 @@ func (f *Function) InvokeMethod(method string, args ...Object) Object {
 	return nil
 }
 
-type Error struct {
-	Message string
-}
-
-func (e *Error) Type() ObjectType { return ERROR_OBJ }
-func (e *Error) Inspect() string  { return "ERROR: " + e.Message }
-func (e *Error) InvokeMethod(method string, args ...Object) Object {
-	return nil
-}
-
 type String struct {
 	Value  string
 	offset int
