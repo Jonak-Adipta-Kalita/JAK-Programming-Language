@@ -73,8 +73,8 @@ func Modify(node Node, modifier ModifierFunc) Node {
 			node.Choices[i] = Modify(node.Choices[i], modifier).(*CaseExpression)
 		}
 	case *ForeachStatement:
-		node.Index = Modify(node.Value, modifier).(*StringLiteral)
-		node.Identifier = Modify(node.Value, modifier).(*StringLiteral)
+		node.Index = Modify(node.Index, modifier).(*StringLiteral)
+		node.Identifier = Modify(node.Identifier, modifier).(*StringLiteral)
 		node.Value = Modify(node.Value, modifier).(Expression)
 		node.Body = Modify(node.Body, modifier).(*BlockStatement)
 	case *ObjectCallExpression:
