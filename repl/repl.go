@@ -15,7 +15,7 @@ import (
 const PROMPT = ">>> "
 
 func Start(in io.Reader, out io.Writer) {
-	file.SetFileName("STDIN")
+	file.SetFileName("<stdin>")
 	scanner := bufio.NewScanner(in)
 	env := object.NewEnvironment()
 	macroEnv := object.NewEnvironment()
