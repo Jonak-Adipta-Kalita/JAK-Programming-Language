@@ -770,7 +770,7 @@ func evalForeachExpression(fle *ast.ForeachStatement, env *object.Environment, f
 
 	for ok {
 		child.Set(fle.Identifier.Value, ret)
-		if fle.Index.Value != "" {
+		if fle.Index != nil && fle.Index.Value != "" {
 			child.Set(fle.Index.Value, idx)
 		}
 
