@@ -249,6 +249,28 @@ func (ao *Array) InvokeMethod(method string, args ...Object) Object {
 			}
 		}
 		return &Integer{Value: int64(result)}
+	case "append":
+		if len(args) < 1 {
+			return &Error{Message: "Missing argument to append()!"}
+		}
+
+		ao.Elements = append(ao.Elements, args[0])
+		return &Null{}
+	case "detach":
+		if len(args) < 2 {
+			return &Error{Message: "Missing argument to append()!"}
+		}
+		if args[0].Type() != INTEGER_OBJ {
+			return &Error{Message: "First argument to detach() must be an integer!"}
+		}
+
+		idx := args[0].(*Integer).Value
+		if idx < 0 || idx >= int64(len(ao.Elements)) {
+			return &Error{Message: "Index out of range!"}
+		}
+
+		ao.Elements = append(ao.Elements[:idx], ao.Elements[idx+1:]...)
+		return &Null{}
 	default:
 		return nil
 	}
