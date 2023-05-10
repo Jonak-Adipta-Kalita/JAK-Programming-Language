@@ -217,7 +217,7 @@ func evalPrefixExpression(operator string, right object.Object, file string, lin
 	case "-":
 		return evalMinusPrefixOperatorExpression(right, file, line)
 	default:
-		return newError("unknown operator: %s%s", file, line, operator, right.Type())
+		return newError("unknown operator: %s %s", file, line, operator, right.Type())
 	}
 }
 
@@ -549,8 +549,7 @@ func isTruthy(obj object.Object) bool {
 }
 
 func newError(format, file string, line int, a ...interface{}) *object.Error {
-	args := append([]interface{}{file, line}, a...)
-	return &object.Error{Message: fmt.Sprintf(format, args...), FileName: file, Line: line}
+	return &object.Error{Message: fmt.Sprintf(format, a...), FileName: file, Line: line}
 }
 
 func PrintParserErrors(out io.Writer, errors []string) {
