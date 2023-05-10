@@ -12,7 +12,7 @@ var helloWorldHash = {
 var helloWorldArray = [helloWorldHash];
 
 if (true) {
-    mut helloWorldArray = append(helloWorldArray, {
+    helloWorldArray.append({
         "hello": "Konnichiwa",
         "world": "Sekai"
     });
@@ -31,4 +31,3 @@ for (counter > 5) {
     print(HelloWorld(helloWorldArray[index]["hello"], helloWorldArray[index]["world"]));
     counter++;
 }
-
