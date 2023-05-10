@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"hash/fnv"
+	"io/ioutil"
 	"os"
 	"strconv"
 	"strings"
@@ -429,5 +430,86 @@ type File struct {
 func (f *File) Inspect() string  { return f.File.Name() }
 func (f *File) Type() ObjectType { return FILE_OBJ }
 func (f *File) InvokeMethod(method string, args ...Object) Object {
-	return nil
+	switch method {
+	case "open":
+		if len(args) < 2 {
+			return &Error{Message: "Missing argument to open()!"}
+		}
+		if args[0].Type() != STRING_OBJ {
+			return &Error{Message: "First argument to open() must be a string!"}
+		}
+		if args[1].Type() != STRING_OBJ {
+			return &Error{Message: "Second argument to open() must be a string!"}
+		}
+
+		filename := args[0].(*String).Value
+		mode := args[1].(*String).Value
+		var flag int
+		switch mode {
+		case "r":
+			flag = os.O_RDONLY
+		case "w":
+			flag = os.O_WRONLY | os.O_CREATE
+		case "a":
+			flag = os.O_WRONLY | os.O_APPEND | os.O_CREATE
+		case "rw":
+			flag = os.O_RDWR | os.O_CREATE
+		case "ra":
+			flag = os.O_RDWR | os.O_APPEND | os.O_CREATE
+		default:
+			return &Error{Message: fmt.Sprintf("Invalid mode for open()! Mode given %s", mode)}
+		}
+		openedFile, err := os.OpenFile(filename, flag, 0644)
+		if err != nil {
+			return &Error{Message: fmt.Sprintf("Could not open file: %s", filename)}
+		}
+		return &File{File: openedFile}
+	case "close":
+		err := f.File.Close()
+
+		if err != nil {
+			return &Error{Message: fmt.Sprintf("Could not close file: %s", f.File.Name())}
+		}
+
+		return &Null{}
+	case "read":
+		content, err := ioutil.ReadAll(f.File)
+
+		if err != nil {
+			return &Error{Message: fmt.Sprintf("Could not read file: %s", f.File.Name())}
+		}
+
+		return &String{Value: string(content)}
+	case "write":
+		if len(args) < 1 {
+			return &Error{Message: "Missing argument to write()!"}
+		}
+		if args[0].Type() != STRING_OBJ {
+			return &Error{Message: "First argument to write() must be a string!"}
+		}
+
+		content := args[0].(*String).Value
+		_, err := f.File.WriteString(content)
+
+		if err != nil {
+			return &Error{Message: fmt.Sprintf("Could not write to file: %s", f.File.Name())}
+		}
+
+		return &Null{}
+	case "readlines":
+		content, err := ioutil.ReadAll(f.File)
+		if err != nil {
+			return &Error{Message: fmt.Sprintf("Could not read file: %s", f.File.Name())}
+		}
+
+		lines := strings.Split(string(content), "\n")
+		array := make([]Object, len(lines))
+		for i, line := range lines {
+			array[i] = &String{Value: line}
+		}
+
+		return &Array{Elements: array}
+	default:
+		return nil
+	}
 }

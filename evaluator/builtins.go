@@ -2,7 +2,6 @@ package evaluator
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"strconv"
 	"strings"
@@ -198,115 +197,6 @@ var builtins = map[string]*object.Builtin{
 			}
 		},
 	},
-
-	"open": {
-		Fn: func(file string, line int, args ...object.Object) object.Object {
-			if len(args) != 2 {
-				return newError("wrong number of arguments. got=%d, want=2", file, line, len(args))
-			}
-			if args[0].Type() != object.STRING_OBJ {
-				return newError("argument to `open` must be STRING, got %s", file, line, args[0].Type())
-			}
-			if args[1].Type() != object.STRING_OBJ {
-				return newError("argument to `open` must be STRING, got %s", file, line, args[1].Type())
-			}
-			filename := args[0].(*object.String).Value
-			mode := args[1].(*object.String).Value
-			var flag int
-			switch mode {
-			case "r":
-				flag = os.O_RDONLY
-			case "w":
-				flag = os.O_WRONLY | os.O_CREATE
-			case "a":
-				flag = os.O_WRONLY | os.O_APPEND | os.O_CREATE
-			case "rw":
-				flag = os.O_RDWR | os.O_CREATE
-			case "ra":
-				flag = os.O_RDWR | os.O_APPEND | os.O_CREATE
-			default:
-				return newError("invalid mode %s", file, line, mode)
-			}
-			openedFile, err := os.OpenFile(filename, flag, 0644)
-			if err != nil {
-				return newError("could not open file %s", file, line, filename)
-			}
-			return &object.File{File: openedFile}
-		},
-	},
-	"close": {
-		Fn: func(file string, line int, args ...object.Object) object.Object {
-			if len(args) != 1 {
-				return newError("wrong number of arguments. got=%d, want=1", file, line, len(args))
-			}
-			if args[0].Type() != object.FILE_OBJ {
-				return newError("argument to `close` must be FILE, got %s", file, line, args[0].Type())
-			}
-			fileObj := args[0].(*object.File)
-			err := fileObj.File.Close()
-			if err != nil {
-				return newError("could not close file %s", file, line, fileObj.File.Name())
-			}
-			return NULL
-		},
-	},
-	"read": {
-		Fn: func(file string, line int, args ...object.Object) object.Object {
-			if len(args) != 1 {
-				return newError("wrong number of arguments. got=%d, want=1", file, line, len(args))
-			}
-			if args[0].Type() != object.FILE_OBJ {
-				return newError("argument to `read` must be FILE, got %s", file, line, args[0].Type())
-			}
-			fileObj := args[0].(*object.File)
-			content, err := ioutil.ReadAll(fileObj.File)
-			if err != nil {
-				return newError("could not read file %s", file, line, fileObj.File.Name())
-			}
-			return &object.String{Value: string(content)}
-		},
-	},
-	"write": {
-		Fn: func(file string, line int, args ...object.Object) object.Object {
-			if len(args) != 2 {
-				return newError("wrong number of arguments. got=%d, want=2", file, line, len(args))
-			}
-			if args[0].Type() != object.FILE_OBJ {
-				return newError("argument to `write` must be FILE, got %s", file, line, args[0].Type())
-			}
-			if args[1].Type() != object.STRING_OBJ {
-				return newError("argument to `write` must be STRING, got %s", file, line, args[1].Type())
-			}
-			fileObj := args[0].(*object.File)
-			_, err := fileObj.File.WriteString(args[1].(*object.String).Value)
-			if err != nil {
-				return newError("could not write to file %s", file, line, fileObj.File.Name())
-			}
-			return NULL
-		},
-	},
-	"readlines": {
-		Fn: func(file string, line int, args ...object.Object) object.Object {
-			if len(args) != 1 {
-				return newError("wrong number of arguments. got=%d, want=1", file, line, len(args))
-			}
-			if args[0].Type() != object.FILE_OBJ {
-				return newError("argument to `readlines` must be FILE, got %s", file, line, args[0].Type())
-			}
-			fileObj := args[0].(*object.File)
-			content, err := ioutil.ReadAll(fileObj.File)
-			if err != nil {
-				return newError("could not read file %s", file, line, fileObj.File.Name())
-			}
-			var elements []object.Object
-			for _, line := range strings.Split(string(content), "\n") {
-				elements = append(elements, &object.String{Value: line})
-			}
-
-			return &object.Array{Elements: elements}
-		},
-	},
-
 	"mkdir": {
 		Fn: func(file string, line int, args ...object.Object) object.Object {
 			if len(args) != 1 {

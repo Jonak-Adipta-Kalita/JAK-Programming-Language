@@ -177,7 +177,6 @@ func (l *Lexer) readIdentifier() string {
 	}
 
 	if strings.Contains(id, ".") {
-
 		if !strings.HasPrefix(id, "directory.") &&
 			!strings.HasPrefix(id, "file.") &&
 			!strings.HasPrefix(id, "math.") &&
