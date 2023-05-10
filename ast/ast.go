@@ -347,7 +347,7 @@ func (pe *PostfixExpression) String() string {
 	var out bytes.Buffer
 	out.WriteString("(")
 	out.WriteString(pe.Token.Literal)
-	out.WriteString(pe.Operator.String())
+	out.WriteString(pe.Operator.Value)
 	out.WriteString(")")
 	return out.String()
 }
@@ -434,7 +434,7 @@ func (fes *ForeachStatement) TokenLiteral() string { return fes.Token.Literal }
 func (fes *ForeachStatement) String() string {
 	var out bytes.Buffer
 	out.WriteString("foreach ")
-	out.WriteString(fes.Identifier.String())
+	out.WriteString(fes.Identifier.Value)
 	out.WriteString(" ")
 	out.WriteString(fes.Value.String())
 	out.WriteString(fes.Body.String())

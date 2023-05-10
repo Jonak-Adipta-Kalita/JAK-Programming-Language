@@ -125,7 +125,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 	case *ast.ForLoopExpression:
 		return evalForLoopExpression(node, env)
 	case *ast.PostfixExpression:
-		return evalPostfixExpression(env, node.Operator.String(), node, file.GetFileName(), node.Token.Line)
+		return evalPostfixExpression(env, node.Operator.Value, node, file.GetFileName(), node.Token.Line)
 	case *ast.ImportStatement:
 		evalImportStatement(node, env)
 	case *ast.NullLiteral:
@@ -765,19 +765,20 @@ func evalForeachExpression(fle *ast.ForeachStatement, env *object.Environment, f
 	}
 
 	child := object.NewEnclosedEnvironment(env)
-
 	helper.Reset()
-
 	ret, idx, ok := helper.Next()
 
 	for ok {
-		child.Set(fle.Identifier.String(), ret)
-
-		idxName := fle.Index
-		if idxName.String() != "" {
-			child.Set(fle.Index.String(), idx)
+		child.Set(fle.Identifier.Value, ret)
+		if fle.Index.Value != "" {
+			child.Set(fle.Index.Value, idx)
 		}
-		Eval(fle.Body, child)
+
+		rt := Eval(fle.Body, child)
+		if !isError(rt) && (rt.Type() == object.RETURN_VALUE_OBJ || rt.Type() == object.ERROR_OBJ) {
+			return rt
+		}
+
 		ret, idx, ok = helper.Next()
 	}
 
