@@ -11,6 +11,7 @@ import (
 	"unicode/utf8"
 
 	"github.com/Jonak-Adipta-Kalita/JAK-Programming-Language/ast"
+	"github.com/Jonak-Adipta-Kalita/JAK-Programming-Language/token"
 )
 
 type ObjectType string
@@ -181,10 +182,8 @@ func (s *String) InvokeMethod(method string, args ...Object) Object {
 	}
 }
 
-type BuiltinFunction func(file string, line int, args ...Object) Object
-
 type Builtin struct {
-	Fn BuiltinFunction
+	Fn func(token token.Token, args ...Object) Object
 }
 
 func (b *Builtin) Type() ObjectType { return BUILTIN_OBJ }

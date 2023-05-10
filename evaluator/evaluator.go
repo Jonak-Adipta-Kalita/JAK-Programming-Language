@@ -45,7 +45,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		if isError(right) {
 			return right
 		}
-		return evalPrefixExpression(node.Operator, right, file.GetFileName(), node.Token.Line)
+		return evalPrefixExpression(node.Operator, right, node.Token)
 	case *ast.InfixExpression:
 		left := Eval(node.Left, env)
 		if isError(left) {
@@ -55,7 +55,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		if isError(right) {
 			return right
 		}
-		return evalInfixExpression(node.Operator, left, right, file.GetFileName(), node.Token.Line)
+		return evalInfixExpression(node.Operator, left, right, node.Token)
 	case *ast.BlockStatement:
 		return evalBlockStatement(node, env)
 	case *ast.IfExpression:
@@ -67,13 +67,13 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		}
 		return &object.ReturnValue{Value: val}
 	case *ast.AssignStatement:
-		return evalAssignStatement(node, env, file.GetFileName(), node.Token.Line)
+		return evalAssignStatement(node, env, node.Token)
 	case *ast.IntegerLiteral:
 		return &object.Integer{Value: node.Value}
 	case *ast.Boolean:
 		return nativeBoolToBooleanObject(node.Value)
 	case *ast.Identifier:
-		return evalIdentifier(node, env, file.GetFileName(), node.Token.Line)
+		return evalIdentifier(node, env, node.Token)
 	case *ast.FunctionLiteral:
 		params := node.Parameters
 		body := node.Body
@@ -83,8 +83,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 			if len(node.Arguments) != 1 {
 				return newError(
 					"wrong number of arguments. got=%d, want=1",
-					file.GetFileName(),
-					node.Token.Line,
+					node.Token,
 					len(node.Arguments),
 				)
 			}
@@ -101,7 +100,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 			return args[0]
 		}
 
-		return applyFunction(function, args, file.GetFileName(), node.Token.Line)
+		return applyFunction(function, args, node.Token)
 	case *ast.StringLiteral:
 		return &object.String{Value: node.Value}
 	case *ast.ArrayLiteral:
@@ -119,13 +118,13 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		if isError(index) {
 			return index
 		}
-		return evalIndexExpression(left, index, file.GetFileName(), node.Token.Line)
+		return evalIndexExpression(left, index, node.Token)
 	case *ast.HashLiteral:
-		return evalHashLiteral(node, env, file.GetFileName(), node.Token.Line)
+		return evalHashLiteral(node, env, node.Token)
 	case *ast.ForLoopExpression:
 		return evalForLoopExpression(node, env)
 	case *ast.PostfixExpression:
-		return evalPostfixExpression(env, node.Operator.Value, node, file.GetFileName(), node.Token.Line)
+		return evalPostfixExpression(env, node.Operator.Value, node, node.Token)
 	case *ast.ImportStatement:
 		evalImportStatement(node, env)
 	case *ast.NullLiteral:
@@ -133,11 +132,11 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 	case *ast.SwitchExpression:
 		return evalSwitchStatement(node, env)
 	case *ast.ForeachStatement:
-		return evalForeachExpression(node, env, file.GetFileName(), node.Token.Line)
+		return evalForeachExpression(node, env, node.Token)
 	case *ast.FloatLiteral:
 		return &object.Float{Value: node.Value}
 	case *ast.ObjectCallExpression:
-		res := evalObjectCallExpression(node, env, file.GetFileName(), node.Token.Line)
+		res := evalObjectCallExpression(node, env, node.Token)
 		return res
 	}
 	return nil
@@ -161,8 +160,7 @@ func evalExpressions(
 func evalIdentifier(
 	node *ast.Identifier,
 	env *object.Environment,
-	file string,
-	line int,
+	token token.Token,
 ) object.Object {
 	if val, ok := env.Get(node.Value); ok {
 		return val
@@ -172,7 +170,7 @@ func evalIdentifier(
 		return builtin
 	}
 
-	return newError("identifier not found: "+node.Value, file, line)
+	return newError("identifier not found: "+node.Value, token)
 }
 
 func evalProgram(program *ast.Program, env *object.Environment) object.Object {
@@ -210,14 +208,14 @@ func nativeBoolToBooleanObject(input bool) *object.Boolean {
 	return FALSE
 }
 
-func evalPrefixExpression(operator string, right object.Object, file string, line int) object.Object {
+func evalPrefixExpression(operator string, right object.Object, token token.Token) object.Object {
 	switch operator {
 	case "!":
 		return evalBangOperatorExpression(right)
 	case "-":
-		return evalMinusPrefixOperatorExpression(right, file, line)
+		return evalMinusPrefixOperatorExpression(right, token)
 	default:
-		return newError("unknown operator: %s %s", file, line, operator, right.Type())
+		return newError("unknown operator: %s %s", token, operator, right.Type())
 	}
 }
 
@@ -225,14 +223,13 @@ func evalPostfixExpression(
 	env *object.Environment,
 	operator string,
 	node *ast.PostfixExpression,
-	file string,
-	line int,
+	token token.Token,
 ) object.Object {
 	switch operator {
 	case "++":
 		val, ok := env.Get(node.Token.Literal)
 		if !ok {
-			return newError("%s is unknown", file, line, node.Token.Literal)
+			return newError("%s is unknown", token, node.Token.Literal)
 		}
 
 		switch arg := val.(type) {
@@ -241,12 +238,12 @@ func evalPostfixExpression(
 			env.Set(node.Token.Literal, &object.Integer{Value: v + 1})
 			return arg
 		default:
-			return newError("%s is not an int", file, line, node.Token.Literal)
+			return newError("%s is not an int", token, node.Token.Literal)
 		}
 	case "--":
 		val, ok := env.Get(node.Token.Literal)
 		if !ok {
-			return newError("%s is unknown", file, line, node.Token.Literal)
+			return newError("%s is unknown", token, node.Token.Literal)
 		}
 
 		switch arg := val.(type) {
@@ -255,30 +252,29 @@ func evalPostfixExpression(
 			env.Set(node.Token.Literal, &object.Integer{Value: v - 1})
 			return arg
 		default:
-			return newError("%s is not an int", file, line, node.Token.Literal)
+			return newError("%s is not an int", token, node.Token.Literal)
 		}
 	default:
-		return newError("unknown operator: %s", file, line, operator)
+		return newError("unknown operator: %s", token, operator)
 	}
 }
 
 func evalInfixExpression(
 	operator string,
 	left, right object.Object,
-	file string,
-	line int,
+	token token.Token,
 ) object.Object {
 	switch {
 	case left.Type() == object.INTEGER_OBJ && right.Type() == object.INTEGER_OBJ:
-		return evalIntegerInfixExpression(operator, left, right, file, line)
+		return evalIntegerInfixExpression(operator, left, right, token)
 	case left.Type() == object.FLOAT_OBJ && right.Type() == object.FLOAT_OBJ:
-		return evalFloatInfixExpression(operator, left, right, file, line)
+		return evalFloatInfixExpression(operator, left, right, token)
 	case left.Type() == object.FLOAT_OBJ && right.Type() == object.INTEGER_OBJ:
-		return evalFloatIntegerInfixExpression(operator, left, right, file, line)
+		return evalFloatIntegerInfixExpression(operator, left, right, token)
 	case left.Type() == object.INTEGER_OBJ && right.Type() == object.FLOAT_OBJ:
-		return evalIntegerFloatInfixExpression(operator, left, right, file, line)
+		return evalIntegerFloatInfixExpression(operator, left, right, token)
 	case left.Type() == object.STRING_OBJ && right.Type() == object.STRING_OBJ:
-		return evalStringInfixExpression(operator, left, right, file, line)
+		return evalStringInfixExpression(operator, left, right, token)
 	case operator == "==":
 		return nativeBoolToBooleanObject(left == right)
 	case operator == "!=":
@@ -289,10 +285,10 @@ func evalInfixExpression(
 		return nativeBoolToBooleanObject(coerceObjectToNativeBool(left) || coerceObjectToNativeBool(right))
 	case left.Type() != right.Type():
 		return newError("type mismatch: %s %s %s",
-			file, line, left.Type(), operator, right.Type())
+			token, left.Type(), operator, right.Type())
 	default:
 		return newError("unknown operator: %s %s %s",
-			file, line, left.Type(), operator, right.Type())
+			token, left.Type(), operator, right.Type())
 	}
 }
 
@@ -309,14 +305,14 @@ func evalBangOperatorExpression(right object.Object) object.Object {
 	}
 }
 
-func evalMinusPrefixOperatorExpression(right object.Object, file string, line int) object.Object {
+func evalMinusPrefixOperatorExpression(right object.Object, token token.Token) object.Object {
 	switch obj := right.(type) {
 	case *object.Integer:
 		return &object.Integer{Value: -obj.Value}
 	case *object.Float:
 		return &object.Float{Value: -obj.Value}
 	default:
-		return newError("unknown operator: -%s", file, line, right.Type())
+		return newError("unknown operator: -%s", token, right.Type())
 	}
 }
 
@@ -346,8 +342,7 @@ func coerceObjectToNativeBool(o object.Object) bool {
 func evalIntegerInfixExpression(
 	operator string,
 	left, right object.Object,
-	file string,
-	line int,
+	token token.Token,
 ) object.Object {
 	leftVal := left.(*object.Integer).Value
 	rightVal := right.(*object.Integer).Value
@@ -377,12 +372,12 @@ func evalIntegerInfixExpression(
 	case "^":
 		return &object.Integer{Value: powInt(leftVal, rightVal)}
 	default:
-		return newError("unknown operator: %s %s %s", file, line,
+		return newError("unknown operator: %s %s %s", token,
 			left.Type(), operator, right.Type())
 	}
 }
 
-func evalFloatInfixExpression(operator string, left, right object.Object, file string, line int) object.Object {
+func evalFloatInfixExpression(operator string, left, right object.Object, token token.Token) object.Object {
 	leftVal := left.(*object.Float).Value
 	rightVal := right.(*object.Float).Value
 	switch operator {
@@ -409,8 +404,7 @@ func evalFloatInfixExpression(operator string, left, right object.Object, file s
 	default:
 		return newError(
 			"unknown operator: %s %s %s",
-			file,
-			line,
+			token,
 			left.Type(),
 			operator,
 			right.Type(),
@@ -418,7 +412,7 @@ func evalFloatInfixExpression(operator string, left, right object.Object, file s
 	}
 }
 
-func evalFloatIntegerInfixExpression(operator string, left, right object.Object, file string, line int) object.Object {
+func evalFloatIntegerInfixExpression(operator string, left, right object.Object, token token.Token) object.Object {
 	leftVal := left.(*object.Float).Value
 	rightVal := float64(right.(*object.Integer).Value)
 	switch operator {
@@ -445,8 +439,7 @@ func evalFloatIntegerInfixExpression(operator string, left, right object.Object,
 	default:
 		return newError(
 			"unknown operator: %s %s %s",
-			file,
-			line,
+			token,
 			left.Type(),
 			operator,
 			right.Type(),
@@ -454,7 +447,7 @@ func evalFloatIntegerInfixExpression(operator string, left, right object.Object,
 	}
 }
 
-func evalIntegerFloatInfixExpression(operator string, left, right object.Object, file string, line int) object.Object {
+func evalIntegerFloatInfixExpression(operator string, left, right object.Object, token token.Token) object.Object {
 	leftVal := float64(left.(*object.Integer).Value)
 	rightVal := right.(*object.Float).Value
 	switch operator {
@@ -481,8 +474,7 @@ func evalIntegerFloatInfixExpression(operator string, left, right object.Object,
 	default:
 		return newError(
 			"unknown operator: %s %s %s",
-			file,
-			line,
+			token,
 			left.Type(),
 			operator,
 			right.Type(),
@@ -493,8 +485,7 @@ func evalIntegerFloatInfixExpression(operator string, left, right object.Object,
 func evalStringInfixExpression(
 	operator string,
 	left, right object.Object,
-	file string,
-	line int,
+	token token.Token,
 ) object.Object {
 	leftVal := left.(*object.String).Value
 	rightVal := right.(*object.String).Value
@@ -507,7 +498,7 @@ func evalStringInfixExpression(
 	case "!=":
 		return nativeBoolToBooleanObject(leftVal != rightVal)
 	default:
-		return newError("unknown operator: %s %s %s", file, line,
+		return newError("unknown operator: %s %s %s", token,
 			left.Type(), operator, right.Type())
 	}
 }
@@ -554,8 +545,8 @@ func isTruthy(obj object.Object) bool {
 	}
 }
 
-func newError(format, file string, line int, a ...interface{}) *object.Error {
-	return &object.Error{Message: fmt.Sprintf(format, a...), FileName: file, Line: line}
+func newError(format string, token token.Token, a ...interface{}) *object.Error {
+	return &object.Error{Message: fmt.Sprintf(format, a...), FileName: file.GetFileName(), Line: token.Line}
 }
 
 func PrintParserErrors(out io.Writer, errors []string) {
@@ -575,16 +566,16 @@ func isError(obj object.Object) bool {
 	return false
 }
 
-func applyFunction(fn object.Object, args []object.Object, file string, line int) object.Object {
+func applyFunction(fn object.Object, args []object.Object, token token.Token) object.Object {
 	switch fn := fn.(type) {
 	case *object.Function:
 		extendedEnv := extendFunctionEnv(fn, args)
 		evaluated := Eval(fn.Body, extendedEnv)
 		return unwrapReturnValue(evaluated)
 	case *object.Builtin:
-		return fn.Fn(file, line, args...)
+		return fn.Fn(token, args...)
 	default:
-		return newError("not a function: %s", file, line, fn.Type())
+		return newError("not a function: %s", token, fn.Type())
 	}
 }
 
@@ -606,14 +597,14 @@ func unwrapReturnValue(obj object.Object) object.Object {
 	return obj
 }
 
-func evalIndexExpression(left, index object.Object, file string, line int) object.Object {
+func evalIndexExpression(left, index object.Object, token token.Token) object.Object {
 	switch {
 	case left.Type() == object.ARRAY_OBJ && index.Type() == object.INTEGER_OBJ:
 		return evalArrayIndexExpression(left, index)
 	case left.Type() == object.HASH_OBJ:
-		return evalHashIndexExpression(left, index, file, line)
+		return evalHashIndexExpression(left, index, token)
 	default:
-		return newError("index operator not supported: %s", file, line, left.Type())
+		return newError("index operator not supported: %s", token, left.Type())
 	}
 }
 
@@ -630,8 +621,7 @@ func evalArrayIndexExpression(array, index object.Object) object.Object {
 func evalHashLiteral(
 	node *ast.HashLiteral,
 	env *object.Environment,
-	file string,
-	line int,
+	token token.Token,
 ) object.Object {
 	pairs := make(map[object.HashKey]object.HashPair)
 	for keyNode, valueNode := range node.Pairs {
@@ -641,7 +631,7 @@ func evalHashLiteral(
 		}
 		hashKey, ok := key.(object.Hashable)
 		if !ok {
-			return newError("unusable as hash key: %s", file, line, key.Type())
+			return newError("unusable as hash key: %s", token, key.Type())
 		}
 		value := Eval(valueNode, env)
 		if isError(value) {
@@ -653,11 +643,11 @@ func evalHashLiteral(
 	return &object.Hash{Pairs: pairs}
 }
 
-func evalHashIndexExpression(hash, index object.Object, file string, line int) object.Object {
+func evalHashIndexExpression(hash, index object.Object, token token.Token) object.Object {
 	hashObject := hash.(*object.Hash)
 	key, ok := index.(object.Hashable)
 	if !ok {
-		return newError("unusable as hash key: %s", file, line, index.Type())
+		return newError("unusable as hash key: %s", token, index.Type())
 	}
 	pair, ok := hashObject.Pairs[key.HashKey()]
 	if !ok {
@@ -708,7 +698,7 @@ func evalImportStatement(is *ast.ImportStatement, env *object.Environment) {
 	file.SetFileName(file.GetMainFileName())
 }
 
-func evalAssignStatement(vs *ast.AssignStatement, env *object.Environment, file string, line int) object.Object {
+func evalAssignStatement(vs *ast.AssignStatement, env *object.Environment, token_ token.Token) object.Object {
 	val := Eval(vs.Value, env)
 	if isError(val) {
 		return val
@@ -716,11 +706,11 @@ func evalAssignStatement(vs *ast.AssignStatement, env *object.Environment, file 
 
 	if vs.Token.Type == token.VAR {
 		if _, ok := env.Get(vs.Name.Value); ok {
-			return newError("Variable `%s` already defined", file, line, vs.Name.Value)
+			return newError("Variable `%s` already defined", token_, vs.Name.Value)
 		}
 	} else if vs.Token.Type == token.MUTATE {
 		if _, ok := env.Get(vs.Name.Value); !ok {
-			return newError("Variable `%s` not defined", file, line, vs.Name.Value)
+			return newError("Variable `%s` not defined", token_, vs.Name.Value)
 		}
 	}
 
@@ -756,12 +746,12 @@ func evalSwitchStatement(se *ast.SwitchExpression, env *object.Environment) obje
 	return nil
 }
 
-func evalForeachExpression(fle *ast.ForeachStatement, env *object.Environment, file string, line int) object.Object {
+func evalForeachExpression(fle *ast.ForeachStatement, env *object.Environment, token token.Token) object.Object {
 	val := Eval(fle.Value, env)
 
 	helper, ok := val.(object.Iterable)
 	if !ok {
-		return newError("%s object doesn't implement the Iterable interface", file, line, val.Type())
+		return newError("%s object doesn't implement the Iterable interface", token, val.Type())
 	}
 
 	child := object.NewEnclosedEnvironment(env)
@@ -785,7 +775,7 @@ func evalForeachExpression(fle *ast.ForeachStatement, env *object.Environment, f
 	return &object.Null{}
 }
 
-func evalObjectCallExpression(call *ast.ObjectCallExpression, env *object.Environment, file string, line int) object.Object {
+func evalObjectCallExpression(call *ast.ObjectCallExpression, env *object.Environment, token token.Token) object.Object {
 	obj := Eval(call.Object, env)
 	if method, ok := call.Call.(*ast.CallExpression); ok {
 		args := evalExpressions(call.Call.(*ast.CallExpression).Arguments, env)
@@ -795,5 +785,5 @@ func evalObjectCallExpression(call *ast.ObjectCallExpression, env *object.Enviro
 		}
 	}
 
-	return newError("Failed to invoke method: %s", file, line, call.Call.(*ast.CallExpression).Function.String())
+	return newError("Failed to invoke method: %s", token, call.Call.(*ast.CallExpression).Function.String())
 }

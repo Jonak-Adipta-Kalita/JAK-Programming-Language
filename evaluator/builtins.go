@@ -8,13 +8,14 @@ import (
 	"unicode/utf8"
 
 	"github.com/Jonak-Adipta-Kalita/JAK-Programming-Language/object"
+	"github.com/Jonak-Adipta-Kalita/JAK-Programming-Language/token"
 )
 
 var builtins = map[string]*object.Builtin{
 	"len": {
-		Fn: func(file string, line int, args ...object.Object) object.Object {
+		Fn: func(token token.Token, args ...object.Object) object.Object {
 			if len(args) != 1 {
-				return newError("wrong number of arguments. got=%d, want=1", file, line,
+				return newError("wrong number of arguments. got=%d, want=1", token,
 					len(args))
 			}
 			switch arg := args[0].(type) {
@@ -23,13 +24,13 @@ var builtins = map[string]*object.Builtin{
 			case *object.String:
 				return &object.Integer{Value: int64(utf8.RuneCountInString(arg.Value))}
 			default:
-				return newError("argument to `len` not supported, got %s", file, line,
+				return newError("argument to `len` not supported, got %s", token,
 					args[0].Type())
 			}
 		},
 	},
 	"print": {
-		Fn: func(file string, line int, args ...object.Object) object.Object {
+		Fn: func(token token.Token, args ...object.Object) object.Object {
 			for i, arg := range args {
 				if i == len(args)-1 {
 					fmt.Println(arg.Inspect())
@@ -41,7 +42,7 @@ var builtins = map[string]*object.Builtin{
 		},
 	},
 	"println": {
-		Fn: func(file string, line int, args ...object.Object) object.Object {
+		Fn: func(token token.Token, args ...object.Object) object.Object {
 			for _, arg := range args {
 				fmt.Println(arg.Inspect())
 			}
@@ -49,9 +50,9 @@ var builtins = map[string]*object.Builtin{
 		},
 	},
 	"input": {
-		Fn: func(file string, line int, args ...object.Object) object.Object {
+		Fn: func(token token.Token, args ...object.Object) object.Object {
 			if len(args) != 1 {
-				return newError("wrong number of arguments. got=%d, want=1", file, line, len(args))
+				return newError("wrong number of arguments. got=%d, want=1", token, len(args))
 			}
 			var input string
 			fmt.Print(args[0].Inspect())
@@ -60,18 +61,17 @@ var builtins = map[string]*object.Builtin{
 		},
 	},
 	"format": {
-		Fn: func(file string, line int, args ...object.Object) object.Object {
+		Fn: func(token token.Token, args ...object.Object) object.Object {
 			if len(args) < 1 {
-				return newError("wrong number of arguments. got=%d, want=1(at least)", file, line, len(args))
+				return newError("wrong number of arguments. got=%d, want=1(at least)", token, len(args))
 			}
 			if args[0].Type() != object.STRING_OBJ {
-				return newError("argument to `format` must be STRING, got %s", file, line, args[0].Type())
+				return newError("argument to `format` must be STRING, got %s", token, args[0].Type())
 			}
 
 			formatString := args[0].(*object.String).Value
 			formattedString := formatString
 
-			// Replace f-string-style expressions with corresponding argument values
 			for i, arg := range args[1:] {
 				replacement := "{" + strconv.Itoa(i) + "}"
 				formattedString = strings.ReplaceAll(formattedString, replacement, arg.Inspect())
@@ -81,12 +81,12 @@ var builtins = map[string]*object.Builtin{
 		},
 	},
 	"range": {
-		Fn: func(file string, line int, args ...object.Object) object.Object {
+		Fn: func(token token.Token, args ...object.Object) object.Object {
 			if len(args) != 1 {
-				return newError("wrong number of arguments. got=%d, want=1", file, line, len(args))
+				return newError("wrong number of arguments. got=%d, want=1", token, len(args))
 			}
 			if args[0].Type() != object.INTEGER_OBJ {
-				return newError("argument to `range` must be INTEGER, got %s", file, line, args[0].Type())
+				return newError("argument to `range` must be INTEGER, got %s", token, args[0].Type())
 			}
 			integer := args[0].(*object.Integer)
 			var elements []object.Object
@@ -97,20 +97,20 @@ var builtins = map[string]*object.Builtin{
 		},
 	},
 	"typeof": {
-		Fn: func(file string, line int, args ...object.Object) object.Object {
+		Fn: func(token token.Token, args ...object.Object) object.Object {
 			if len(args) != 1 {
-				return newError("wrong number of arguments. got=%d, want=1", file, line, len(args))
+				return newError("wrong number of arguments. got=%d, want=1", token, len(args))
 			}
 			return &object.String{Value: string(args[0].Type())}
 		},
 	},
 	"exit": {
-		Fn: func(file string, line int, args ...object.Object) object.Object {
+		Fn: func(token token.Token, args ...object.Object) object.Object {
 			if len(args) != 1 {
-				return newError("wrong number of arguments. got=%d, want=1", file, line, len(args))
+				return newError("wrong number of arguments. got=%d, want=1", token, len(args))
 			}
 			if args[0].Type() != object.INTEGER_OBJ {
-				return newError("argument to `exit` must be INTEGER, got %s", file, line, args[0].Type())
+				return newError("argument to `exit` must be INTEGER, got %s", token, args[0].Type())
 			}
 			integer := args[0].(*object.Integer)
 			os.Exit(int(integer.Value))
@@ -118,9 +118,9 @@ var builtins = map[string]*object.Builtin{
 		},
 	},
 	"int": {
-		Fn: func(file string, line int, args ...object.Object) object.Object {
+		Fn: func(token token.Token, args ...object.Object) object.Object {
 			if len(args) != 1 {
-				return newError("wrong number of arguments. got=%d, want=1", file, line, len(args))
+				return newError("wrong number of arguments. got=%d, want=1", token, len(args))
 			}
 			switch arg := args[0].(type) {
 			case *object.Integer:
@@ -128,20 +128,20 @@ var builtins = map[string]*object.Builtin{
 			case *object.String:
 				integer, err := strconv.ParseInt(arg.Value, 10, 64)
 				if err != nil {
-					return newError("could not convert string to integer", file, line)
+					return newError("could not convert string to integer", token)
 				}
 				return &object.Integer{Value: integer}
 			case *object.Float:
 				return &object.Integer{Value: int64(arg.Value)}
 			default:
-				return newError("argument to `int` not supported, got %s", file, line, args[0].Type())
+				return newError("argument to `int` not supported, got %s", token, args[0].Type())
 			}
 		},
 	},
 	"float": {
-		Fn: func(file string, line int, args ...object.Object) object.Object {
+		Fn: func(token token.Token, args ...object.Object) object.Object {
 			if len(args) != 1 {
-				return newError("wrong number of arguments. got=%d, want=1", file, line, len(args))
+				return newError("wrong number of arguments. got=%d, want=1", token, len(args))
 			}
 			switch arg := args[0].(type) {
 			case *object.Integer:
@@ -151,18 +151,18 @@ var builtins = map[string]*object.Builtin{
 			case *object.String:
 				float, err := strconv.ParseFloat(arg.Value, 64)
 				if err != nil {
-					return newError("could not convert string to float", file, line)
+					return newError("could not convert string to float", token)
 				}
 				return &object.Float{Value: float}
 			default:
-				return newError("argument to `float` not supported, got %s", file, line, args[0].Type())
+				return newError("argument to `float` not supported, got %s", token, args[0].Type())
 			}
 		},
 	},
 	"str": {
-		Fn: func(file string, line int, args ...object.Object) object.Object {
+		Fn: func(token token.Token, args ...object.Object) object.Object {
 			if len(args) != 1 {
-				return newError("wrong number of arguments. got=%d, want=1", file, line, len(args))
+				return newError("wrong number of arguments. got=%d, want=1", token, len(args))
 			}
 			switch arg := args[0].(type) {
 			case *object.Integer:
@@ -172,14 +172,14 @@ var builtins = map[string]*object.Builtin{
 			case *object.String:
 				return arg
 			default:
-				return newError("argument to `str` not supported, got %s", file, line, args[0].Type())
+				return newError("argument to `str` not supported, got %s", token, args[0].Type())
 			}
 		},
 	},
 	"bool": {
-		Fn: func(file string, line int, args ...object.Object) object.Object {
+		Fn: func(token token.Token, args ...object.Object) object.Object {
 			if len(args) != 1 {
-				return newError("wrong number of arguments. got=%d, want=1", file, line, len(args))
+				return newError("wrong number of arguments. got=%d, want=1", token, len(args))
 			}
 			switch arg := args[0].(type) {
 			case *object.Boolean:
@@ -191,73 +191,73 @@ var builtins = map[string]*object.Builtin{
 				if arg.Value == "false" {
 					return FALSE
 				}
-				return newError("could not convert string to boolean", file, line)
+				return newError("could not convert string to boolean", token)
 			default:
-				return newError("argument to `bool` not supported, got %s", file, line, args[0].Type())
+				return newError("argument to `bool` not supported, got %s", token, args[0].Type())
 			}
 		},
 	},
 	"mkdir": {
-		Fn: func(file string, line int, args ...object.Object) object.Object {
+		Fn: func(token token.Token, args ...object.Object) object.Object {
 			if len(args) != 1 {
-				return newError("wrong number of arguments. got=%d, want=1", file, line, len(args))
+				return newError("wrong number of arguments. got=%d, want=1", token, len(args))
 			}
 			if args[0].Type() != object.STRING_OBJ {
-				return newError("argument to `mkdir` must be STRING, got %s", file, line, args[0].Type())
+				return newError("argument to `mkdir` must be STRING, got %s", token, args[0].Type())
 			}
 			dirname := args[0].(*object.String).Value
 			err := os.Mkdir(dirname, 0755)
 			if err != nil {
-				return newError("could not create directory %s", file, line, dirname)
+				return newError("could not create directory %s", token, dirname)
 			}
 			return NULL
 		},
 	},
 	"rmdir": {
-		Fn: func(file string, line int, args ...object.Object) object.Object {
+		Fn: func(token token.Token, args ...object.Object) object.Object {
 			if len(args) != 1 {
-				return newError("wrong number of arguments. got=%d, want=1", file, line, len(args))
+				return newError("wrong number of arguments. got=%d, want=1", token, len(args))
 			}
 			if args[0].Type() != object.STRING_OBJ {
-				return newError("argument to `rmdir` must be STRING, got %s", file, line, args[0].Type())
+				return newError("argument to `rmdir` must be STRING, got %s", token, args[0].Type())
 			}
 			dirname := args[0].(*object.String).Value
 			err := os.Remove(dirname)
 			if err != nil {
-				return newError("could not remove directory %s", file, line, dirname)
+				return newError("could not remove directory %s", token, dirname)
 			}
 			return NULL
 		},
 	},
 	"mkfile": {
-		Fn: func(file string, line int, args ...object.Object) object.Object {
+		Fn: func(token token.Token, args ...object.Object) object.Object {
 			if len(args) != 1 {
-				return newError("wrong number of arguments. got=%d, want=1", file, line, len(args))
+				return newError("wrong number of arguments. got=%d, want=1", token, len(args))
 			}
 			if args[0].Type() != object.STRING_OBJ {
-				return newError("argument to `mkfile` must be STRING, got %s", file, line, args[0].Type())
+				return newError("argument to `mkfile` must be STRING, got %s", token, args[0].Type())
 			}
 			filename := args[0].(*object.String).Value
 			fileObj, err := os.Create(filename)
 			fileObj.Close()
 			if err != nil {
-				return newError("could not create file %s", file, line, filename)
+				return newError("could not create file %s", token, filename)
 			}
 			return NULL
 		},
 	},
 	"rmfile": {
-		Fn: func(file string, line int, args ...object.Object) object.Object {
+		Fn: func(token token.Token, args ...object.Object) object.Object {
 			if len(args) != 1 {
-				return newError("wrong number of arguments. got=%d, want=1", file, line, len(args))
+				return newError("wrong number of arguments. got=%d, want=1", token, len(args))
 			}
 			if args[0].Type() != object.STRING_OBJ {
-				return newError("argument to `rmfile` must be STRING, got %s", file, line, args[0].Type())
+				return newError("argument to `rmfile` must be STRING, got %s", token, args[0].Type())
 			}
 			filename := args[0].(*object.String).Value
 			err := os.Remove(filename)
 			if err != nil {
-				return newError("could not remove file %s", file, line, filename)
+				return newError("could not remove file %s", token, filename)
 			}
 			return NULL
 		},
