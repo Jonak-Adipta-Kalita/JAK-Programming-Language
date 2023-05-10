@@ -327,16 +327,8 @@ func (h *Hash) Next() (Object, Object, bool) {
 	return nil, &Integer{Value: 0}, false
 }
 func (h *Hash) InvokeMethod(method string, args ...Object) Object {
-	if method == "methods" {
-		names := []string{"keys", "methods", "string"}
-
-		result := make([]Object, len(names))
-		for i, txt := range names {
-			result[i] = &String{Value: txt}
-		}
-		return &Array{Elements: result}
-	}
-	if method == "keys" {
+	switch method {
+	case "keys":
 		ents := len(h.Pairs)
 		array := make([]Object, ents)
 
@@ -347,11 +339,17 @@ func (h *Hash) InvokeMethod(method string, args ...Object) Object {
 		}
 
 		return &Array{Elements: array}
+	case "values":
+		pairs := []Object{}
+
+		for _, pair := range h.Pairs {
+			pairs = append(pairs, pair.Value)
+		}
+
+		return &Array{Elements: pairs}
+	default:
+		return nil
 	}
-	if method == "string" {
-		return &String{Value: h.Inspect()}
-	}
-	return nil
 }
 
 type Hashable interface {
@@ -421,18 +419,6 @@ type Float struct {
 func (f *Float) Inspect() string  { return strconv.FormatFloat(f.Value, 'f', -1, 64) }
 func (f *Float) Type() ObjectType { return FLOAT_OBJ }
 func (f *Float) InvokeMethod(method string, args ...Object) Object {
-	if method == "methods" {
-		names := []string{"methods", "string"}
-
-		result := make([]Object, len(names))
-		for i, txt := range names {
-			result[i] = &String{Value: txt}
-		}
-		return &Array{Elements: result}
-	}
-	if method == "string" {
-		return &String{Value: f.Inspect()}
-	}
 	return nil
 }
 
