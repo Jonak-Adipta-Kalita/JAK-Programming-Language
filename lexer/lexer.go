@@ -146,8 +146,7 @@ func (l *Lexer) NextToken() token.Token {
 	case '^':
 		tok = newToken(token.CARET, l.line, l.ch)
 	case 0:
-		tok.Literal = ""
-		tok.Type = token.EOF
+		tok = newToken(token.EOF, l.line, l.ch)
 	default:
 		if isLetter(l.ch) {
 			tok.Literal = l.readIdentifier()
