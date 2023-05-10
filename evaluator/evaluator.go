@@ -221,7 +221,13 @@ func evalPrefixExpression(operator string, right object.Object, file string, lin
 	}
 }
 
-func evalPostfixExpression(env *object.Environment, operator string, node *ast.PostfixExpression, file string, line int) object.Object {
+func evalPostfixExpression(
+	env *object.Environment,
+	operator string,
+	node *ast.PostfixExpression,
+	file string,
+	line int,
+) object.Object {
 	switch operator {
 	case "++":
 		val, ok := env.Get(node.Token.Literal)
