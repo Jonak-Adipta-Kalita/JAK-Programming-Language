@@ -546,7 +546,7 @@ func isTruthy(obj object.Object) bool {
 }
 
 func newError(format string, token token.Token, a ...interface{}) *object.Error {
-	return &object.Error{Message: fmt.Sprintf(format, a...), FileName: file.GetFileName(), Line: token.Line}
+	return &object.Error{Message: fmt.Sprintf(format, a...), FileName: file.GetFileName(), Token: token}
 }
 
 func PrintParserErrors(out io.Writer, errors []string) {

@@ -52,103 +52,103 @@ func (l *Lexer) NextToken() token.Token {
 		if l.peekChar() == '=' {
 			ch := l.ch
 			l.readChar()
-			tok = newToken(token.EQ, l.line, string(ch)+string(l.ch))
+			tok = newToken(token.EQ, l.line, string(ch)+string(l.ch), l.position)
 		} else {
-			tok = newToken(token.ASSIGN, l.line, string(l.ch))
+			tok = newToken(token.ASSIGN, l.line, string(l.ch), l.position)
 		}
 	case ';':
-		tok = newToken(token.SEMICOLON, l.line, string(l.ch))
+		tok = newToken(token.SEMICOLON, l.line, string(l.ch), l.position)
 	case '(':
-		tok = newToken(token.LPAREN, l.line, string(l.ch))
+		tok = newToken(token.LPAREN, l.line, string(l.ch), l.position)
 	case ')':
-		tok = newToken(token.RPAREN, l.line, string(l.ch))
+		tok = newToken(token.RPAREN, l.line, string(l.ch), l.position)
 	case ',':
-		tok = newToken(token.COMMA, l.line, string(l.ch))
+		tok = newToken(token.COMMA, l.line, string(l.ch), l.position)
 	case '.':
-		tok = newToken(token.DOT, l.line, string(l.ch))
+		tok = newToken(token.DOT, l.line, string(l.ch), l.position)
 	case '+':
 		if l.peekChar() == '+' {
 			ch := l.ch
 			l.readChar()
-			tok = newToken(token.PLUS_PLUS, l.line, string(ch)+string(l.ch))
+			tok = newToken(token.PLUS_PLUS, l.line, string(ch)+string(l.ch), l.position)
 		} else {
-			tok = newToken(token.PLUS, l.line, string(l.ch))
+			tok = newToken(token.PLUS, l.line, string(l.ch), l.position)
 		}
 	case '-':
 		if l.peekChar() == '-' {
 			ch := l.ch
 			l.readChar()
-			tok = newToken(token.MINUS_MINUS, l.line, string(ch)+string(l.ch))
+			tok = newToken(token.MINUS_MINUS, l.line, string(ch)+string(l.ch), l.position)
 		} else {
-			tok = newToken(token.MINUS, l.line, string(l.ch))
+			tok = newToken(token.MINUS, l.line, string(l.ch), l.position)
 		}
 	case '!':
 		if l.peekChar() == '=' {
 			ch := l.ch
 			l.readChar()
-			tok = newToken(token.NOT_EQ, l.line, string(ch)+string(l.ch))
+			tok = newToken(token.NOT_EQ, l.line, string(ch)+string(l.ch), l.position)
 		} else {
-			tok = newToken(token.BANG, l.line, string(l.ch))
+			tok = newToken(token.BANG, l.line, string(l.ch), l.position)
 		}
 	case '*':
-		tok = newToken(token.ASTERISK, l.line, string(l.ch))
+		tok = newToken(token.ASTERISK, l.line, string(l.ch), l.position)
 	case '/':
-		tok = newToken(token.SLASH, l.line, string(l.ch))
+		tok = newToken(token.SLASH, l.line, string(l.ch), l.position)
 	case '%':
-		tok = newToken(token.MODULO, l.line, string(l.ch))
+		tok = newToken(token.MODULO, l.line, string(l.ch), l.position)
 	case '&':
 		if l.peekChar() == '&' {
 			ch := l.ch
 			l.readChar()
-			tok = newToken(token.AND, l.line, string(ch)+string(l.ch))
+			tok = newToken(token.AND, l.line, string(ch)+string(l.ch), l.position)
 		}
 	case '|':
 		if l.peekChar() == '|' {
 			ch := l.ch
 			l.readChar()
-			tok = newToken(token.OR, l.line, string(ch)+string(l.ch))
+			tok = newToken(token.OR, l.line, string(ch)+string(l.ch), l.position)
 		}
 	case '<':
-		tok = newToken(token.LT, l.line, string(l.ch))
+		tok = newToken(token.LT, l.line, string(l.ch), l.position)
 		if l.peekChar() == '=' {
 			ch := l.ch
 			l.readChar()
-			tok = newToken(token.LT_EQ, l.line, string(ch)+string(l.ch))
+			tok = newToken(token.LT_EQ, l.line, string(ch)+string(l.ch), l.position)
 
 		}
 	case '>':
-		tok = newToken(token.GT, l.line, string(l.ch))
+		tok = newToken(token.GT, l.line, string(l.ch), l.position)
 		if l.peekChar() == '=' {
 			ch := l.ch
 			l.readChar()
-			tok = newToken(token.GT_EQ, l.line, string(ch)+string(l.ch))
+			tok = newToken(token.GT_EQ, l.line, string(ch)+string(l.ch), l.position)
 		}
 	case '{':
-		tok = newToken(token.LBRACE, l.line, string(l.ch))
+		tok = newToken(token.LBRACE, l.line, string(l.ch), l.position)
 	case '}':
-		tok = newToken(token.RBRACE, l.line, string(l.ch))
+		tok = newToken(token.RBRACE, l.line, string(l.ch), l.position)
 	case '[':
-		tok = newToken(token.LBRACKET, l.line, string(l.ch))
+		tok = newToken(token.LBRACKET, l.line, string(l.ch), l.position)
 	case ']':
-		tok = newToken(token.RBRACKET, l.line, string(l.ch))
+		tok = newToken(token.RBRACKET, l.line, string(l.ch), l.position)
 	case '"':
-		tok = newToken(token.STRING, l.line, l.readString())
+		tok = newToken(token.STRING, l.line, l.readString(), l.position)
 	case ':':
-		tok = newToken(token.COLON, l.line, string(l.ch))
+		tok = newToken(token.COLON, l.line, string(l.ch), l.position)
 	case '^':
-		tok = newToken(token.CARET, l.line, string(l.ch))
+		tok = newToken(token.CARET, l.line, string(l.ch), l.position)
 	case 0:
-		tok = newToken(token.EOF, l.line, string(l.ch))
+		tok = newToken(token.EOF, l.line, string(l.ch), l.position)
 	default:
 		if isLetter(l.ch) {
 			indentifier := l.readIdentifier()
-			tok = newToken(token.LookupIdentifier(indentifier), l.line, indentifier)
+			tok = newToken(token.LookupIdentifier(indentifier), l.line, indentifier, l.position)
 
 			return tok
 		} else if isDigit(l.ch) {
 			return l.readDecimal()
 		} else {
-			tok = newToken(token.ILLEGAL, l.line, string(l.ch))
+			tok = newToken(token.ILLEGAL, l.line, string(l.ch), l.position)
 		}
 	}
 
@@ -156,8 +156,8 @@ func (l *Lexer) NextToken() token.Token {
 	return tok
 }
 
-func newToken(tokenType token.TokenType, line int, literal string) token.Token {
-	return token.Token{Type: tokenType, Literal: literal, Line: line}
+func newToken(tokenType token.TokenType, line int, literal string, posStart int) token.Token {
+	return token.Token{Type: tokenType, Literal: literal, Line: line, PosStart: posStart, PosEnd: posStart + len(literal)}
 }
 
 func (l *Lexer) readIdentifier() string {
@@ -296,16 +296,16 @@ func (l *Lexer) readDecimal() token.Token {
 		l.readChar()
 		fraction := l.readNumber()
 		if isEmpty(l.ch) || isWhitespace(l.ch) || isOperator(l.ch) || isComparison(l.ch) || isCompound(l.ch) || isBracket(l.ch) || isBrace(l.ch) || isParen(l.ch) {
-			return newToken(token.FLOAT, l.line, integer+"."+fraction)
+			return newToken(token.FLOAT, l.line, integer+"."+fraction, l.position)
 		}
 		illegalPart := l.readUntilWhitespace()
-		return newToken(token.ILLEGAL, l.line, integer+"."+fraction+illegalPart)
+		return newToken(token.ILLEGAL, l.line, integer+"."+fraction+illegalPart, l.position)
 
 	} else if isEmpty(l.ch) || isWhitespace(l.ch) || isOperator(l.ch) || isComparison(l.ch) || isCompound(l.ch) || isBracket(l.ch) || isBrace(l.ch) || isParen(l.ch) {
-		return newToken(token.INT, l.line, integer)
+		return newToken(token.INT, l.line, integer, l.position)
 	} else {
 		illegalPart := l.readUntilWhitespace()
-		return newToken(token.ILLEGAL, l.line, integer+illegalPart)
+		return newToken(token.ILLEGAL, l.line, integer+illegalPart, l.position)
 	}
 }
 
