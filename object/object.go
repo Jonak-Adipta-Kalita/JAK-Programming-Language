@@ -49,12 +49,7 @@ type Boolean struct {
 func (b *Boolean) Type() ObjectType { return BOOLEAN_OBJ }
 func (b *Boolean) Inspect() string  { return fmt.Sprintf("%t", b.Value) }
 func (b *Boolean) InvokeMethod(method string, args ...Object) Object {
-	switch method {
-	case "string":
-		return &String{Value: b.Inspect()}
-	default:
-		return nil
-	}
+	return nil
 }
 
 type Integer struct {
