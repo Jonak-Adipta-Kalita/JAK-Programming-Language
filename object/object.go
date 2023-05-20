@@ -177,6 +177,8 @@ func (s *String) InvokeMethod(method string, args ...Object) Object {
 		return &String{Value: strings.ToLower(s.Value)}
 	case "toUpper":
 		return &String{Value: strings.ToUpper(s.Value)}
+	case "toTitle":
+		return &String{Value: strings.ToTitle(s.Value)}
 	default:
 		return nil
 	}
