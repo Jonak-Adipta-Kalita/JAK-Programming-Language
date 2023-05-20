@@ -305,16 +305,16 @@ func (l *Lexer) readDecimal() token.Token {
 		l.readChar()
 		fraction := l.readNumber()
 		if isEmpty(l.ch) || isWhitespace(l.ch) || isOperator(l.ch) || isComparison(l.ch) || isCompound(l.ch) || isBracket(l.ch) || isBrace(l.ch) || isParen(l.ch) {
-			return token.Token{Type: token.FLOAT, Literal: integer + "." + fraction}
+			return token.Token{Type: token.FLOAT, Literal: integer + "." + fraction, Line: l.line}
 		}
 		illegalPart := l.readUntilWhitespace()
-		return token.Token{Type: token.ILLEGAL, Literal: integer + "." + fraction + illegalPart}
+		return token.Token{Type: token.ILLEGAL, Literal: integer + "." + fraction + illegalPart, Line: l.line}
 
 	} else if isEmpty(l.ch) || isWhitespace(l.ch) || isOperator(l.ch) || isComparison(l.ch) || isCompound(l.ch) || isBracket(l.ch) || isBrace(l.ch) || isParen(l.ch) {
-		return token.Token{Type: token.INT, Literal: integer}
+		return token.Token{Type: token.INT, Literal: integer, Line: l.line}
 	} else {
 		illegalPart := l.readUntilWhitespace()
-		return token.Token{Type: token.ILLEGAL, Literal: integer + illegalPart}
+		return token.Token{Type: token.ILLEGAL, Literal: integer + illegalPart, Line: l.line}
 	}
 }
 
