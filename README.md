@@ -1,3 +1,19 @@
+<br />
+
+<div align=center>
+
+![Title](https://raw.githubusercontent.com/Jonak-Adipta-Kalita/JAK-Programming-Language/main/assets/title.png)
+
+</div>
+
+<br />
+
+<div align=justify>
+
+</div>
+
+<br />
+
 <div align=center>
 
 ![License](https://img.shields.io/github/license/Jonak-Adipta-Kalita/JAK-Programming-Language?style=for-the-badge)
