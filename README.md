@@ -10,6 +10,12 @@
 
 <div align=justify>
 
+Introducing a versatile and user-friendly general-purpose programming language that combines the best of familiar syntax with a host of innovative
+improvements. Designed with simplicity and readability in mind, this language offers a streamlined coding experience, allowing developers to express
+ideas quickly and concisely. With a focus on performance and modularity, it optimizes execution speed, resource utilization, and facilitates the
+creation of scalable and reusable components. Supported by a thriving ecosystem and an active community, this language is perfect for a wide range of
+applications.
+
 </div>
 
 <br />
@@ -38,7 +44,8 @@ Check out our [roadmap](https://github.com/users/Jonak-Adipta-Kalita/projects/5)
 
 ## Contributing
 
-Kindly read our [Contributing Guide](CONTRIBUTING.md) to learn and understand about our development process, how to propose bug fixes and improvements, and how to build and test your changes to **JAK Programming Language**.
+Kindly read our [Contributing Guide](CONTRIBUTING.md) to learn and understand about our development process, how to propose bug fixes and improvements,
+and how to build and test your changes to **JAK Programming Language**.
 
 ## Technology(s) Used
 
