@@ -6,8 +6,6 @@
 
 </div>
 
-<br />
-
 <div align=justify>
 
 Introducing a versatile and user-friendly general-purpose programming language that combines the best of familiar syntax with a host of innovative
