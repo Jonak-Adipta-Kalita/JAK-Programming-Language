@@ -1,7 +1,5 @@
 <div align=center>
 
-# JAK-Programming-Language
-
 ![License](https://img.shields.io/github/license/Jonak-Adipta-Kalita/JAK-Programming-Language?style=for-the-badge)
 ![GitHub Repo Stars](https://img.shields.io/github/stars/Jonak-Adipta-Kalita/JAK-Programming-Language?style=for-the-badge)
 ![GitHub Forks](https://img.shields.io/github/forks/Jonak-Adipta-Kalita/JAK-Programming-Language?style=for-the-badge)
@@ -10,46 +8,21 @@
 
 </div>
 
-## Steps
+## Community support
 
-### Clone the Repository
+For additional help, you can use one of these channels to ask a question:
 
-To Clone this Repository, open a terminal in a empty folder and type
+-   [Github Discussions](https://github.com/Jonak-Adipta-Kalita/JAK-Programming-Language/discussions) - Discussions with the community and the team.
+-   [Github Issues](https://github.com/Jonak-Adipta-Kalita/JAK-Programming-Language/issues) - For bug reports and feature requests.
+-   [Twitter](https://twitter.com/AdiptaJonak) - Get the product updates easily.
 
-```bash
-git clone https://github.com/Jonak-Adipta-Kalita/JAK-Programming-Language.git
-```
+## Roadmap
 
-### Installing The Required Modules
+Check out our [roadmap](https://github.com/users/Jonak-Adipta-Kalita/projects/5) to get informed of the latest features released and the upcoming ones.
 
-To install the required modules, just open a terminal in the directory where this project is cloned. Now type:
+## Contributing
 
-```bash
-go install
-```
-
-and hit Enter.
-
-### Starting the Language
-
-Open a terminal in the Directory. Now type:
-
-```bash
-go build .
-JAK-Programming-Language.exe
-```
-
-and hit Enter. This will start the Language
-
-#### Run the Example File
-
-Open a terminal in the Directory. Now type:
-
-```bash
-JAK-Programming-Language.exe example/helloWorld.jak
-```
-
-and hit Enter.
+Kindly read our [Contributing Guide](CONTRIBUTING.md) to learn and understand about our development process, how to propose bug fixes and improvements, and how to build and test your changes to **JAK Programming Language**.
 
 ## Technology(s) Used
 
