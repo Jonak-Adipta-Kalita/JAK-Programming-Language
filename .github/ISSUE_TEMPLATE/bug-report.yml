@@ -45,4 +45,4 @@ body:
           description: Which Version of our Language are you using?
           placeholder: ex. latest, 1.1.0
       validations:
-          required: false
+          required: true
