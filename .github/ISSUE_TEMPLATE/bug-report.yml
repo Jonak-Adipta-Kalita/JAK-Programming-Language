@@ -38,6 +38,8 @@ body:
               - label: Windows
               - label: Mac
               - label: Linux
+      validations:
+          required: true
     - type: input
       id: version
       attributes:
