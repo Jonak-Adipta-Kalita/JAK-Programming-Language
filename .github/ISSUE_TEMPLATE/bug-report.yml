@@ -1,0 +1,48 @@
+name: Bug Report
+description: File a Bug Report
+title: "[Bug]: "
+labels: ["bug"]
+assignees:
+    - Jonak-Adipta-Kalita
+body:
+    - type: markdown
+      attributes:
+          value: |
+              Thanks for taking the time to fill out this bug report!
+    - type: textarea
+      id: what-happened
+      attributes:
+          label: What happened?
+          description: Also tell us, what did you expect to happen?
+          placeholder: Tell us what you see!
+          value: "A bug happened!"
+      validations:
+          required: true
+    - type: input
+      attributes:
+          label: Reproduction
+          description: |
+              You must provide a way to reproduce the problem. If you don't provide a repro, the issue will be closed automatically after a specific period.
+              You can put the repro code below, or link to a repo with the repro code.
+              Keep the repro code as simple as possible, with the minimum amount of code required to repro the issue.
+          placeholder: Code/Link to reproduce
+      validations:
+          required: true
+    - type: checkboxes
+      id: os
+      attributes:
+          label: OS (Operating System)
+          description: |
+              What are the OS(s) where you see the issue?
+          options:
+              - label: Windows
+              - label: Mac
+              - label: Linux
+    - type: input
+      id: version
+      attributes:
+          label: Version
+          description: Which Version of our Language are you using?
+          placeholder: ex. latest, 1.1.0
+      validations:
+          required: false
