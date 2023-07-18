@@ -11,6 +11,34 @@ import (
 	"github.com/Jonak-Adipta-Kalita/JAK-Programming-Language/token"
 )
 
+func reverseArray(elements []object.Object) []object.Object {
+	newElements := make([]object.Object, len(elements))
+	for i, j := 0, len(elements)-1; i < j; i, j = i+1, j-1 {
+		newElements[i], newElements[j] = elements[j], elements[i]
+	}
+
+	return newElements
+}
+
+func reverseString(value string) string {
+	runes := []rune(value)
+	for i, j := 0, len(runes)-1; i < j; i, j = i+1, j-1 {
+		runes[i], runes[j] = runes[j], runes[i]
+	}
+
+	return string(runes)
+}
+
+func reverseInteger(value int64) int64 {
+	var result int64
+	for value != 0 {
+		result = result*10 + value%10
+		value /= 10
+	}
+
+	return result
+}
+
 var builtins = map[string]*object.Builtin{
 	"len": {
 		Fn: func(token token.Token, args ...object.Object) object.Object {
@@ -23,8 +51,32 @@ var builtins = map[string]*object.Builtin{
 				return &object.Integer{Value: int64(len(arg.Elements))}
 			case *object.String:
 				return &object.Integer{Value: int64(utf8.RuneCountInString(arg.Value))}
+			case *object.Integer:
+				return &object.Integer{Value: int64(len(strconv.Itoa(int(arg.Value))))}
 			default:
 				return newError("argument to `len` not supported, got %s", token,
+					args[0].Type())
+			}
+		},
+	},
+	"reverse": {
+		Fn: func(token token.Token, args ...object.Object) object.Object {
+			if len(args) != 1 {
+				return newError("wrong number of arguments. got=%d, want=1", token,
+					len(args))
+			}
+			switch arg := args[0].(type) {
+			case *object.Array:
+				reversed := reverseArray(arg.Elements)
+				return &object.Array{Elements: reversed}
+			case *object.String:
+				reversed := reverseString(arg.Value)
+				return &object.String{Value: reversed}
+			case *object.Integer:
+				reversed := reverseInteger(arg.Value)
+				return &object.Integer{Value: reversed}
+			default:
+				return newError("argument to `reverse` not supported, got %s", token,
 					args[0].Type())
 			}
 		},
