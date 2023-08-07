@@ -38,6 +38,8 @@ For additional help, you can use one of these channels to ask a question:
 
 ## Roadmap
 
+Check out this [discussion](https://github.com/Jonak-Adipta-Kalita/JAK-Programming-Language/discussions/102) to stay up to date with planned features and future direction of **JAK Programming Language**.
+
 Check out our [roadmap](https://github.com/users/Jonak-Adipta-Kalita/projects/5) to get informed of the latest features released and the upcoming ones.
 
 ## Contributing
