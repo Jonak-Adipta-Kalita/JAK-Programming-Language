@@ -224,15 +224,12 @@ func (ao *Array) InvokeMethod(method string, args ...Object) Object {
 			return &Error{Message: "Missing argument to find()!"}
 		}
 
-		// TODO - Allow finding non-strings.
 		arg := args[0].Inspect()
 		result := -1
 		for idx, entry := range ao.Elements {
-			if entry.Type() == STRING_OBJ {
-				if entry.(*String).Value == arg {
-					result = idx
-					break
-				}
+			if entry.Inspect() == arg {
+				result = idx
+				break
 			}
 		}
 		return &Integer{Value: int64(result)}
