@@ -264,7 +264,7 @@ func evalInfixExpression(
 	left, right object.Object,
 	token token.Token,
 ) object.Object {
-	// arithmaticEqualOperators := []string{"+=", "-=", "*=", "/="}
+	arithmaticEqualOperators := []string{"+=", "-=", "*=", "/="}
 
 	switch {
 	case left.Type() == object.INTEGER_OBJ && right.Type() == object.INTEGER_OBJ:
