@@ -3,7 +3,6 @@ package evaluator
 import (
 	"fmt"
 	"io"
-	"io/ioutil"
 	"math"
 	"os"
 
@@ -678,7 +677,7 @@ func evalForLoopExpression(fle *ast.ForLoopExpression, env *object.Environment) 
 func evalImportStatement(is *ast.ImportStatement, env *object.Environment) {
 	filePath := is.Path.Value
 	file.SetFileName(filePath)
-	contents, err := ioutil.ReadFile(filePath)
+	contents, err := os.ReadFile(filePath)
 
 	if err != nil {
 		fmt.Printf("Failure to read file '%s'. Err: %s", string(contents), err)

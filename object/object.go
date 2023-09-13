@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"hash/fnv"
-	"io/ioutil"
+	"io"
 	"os"
 	"strconv"
 	"strings"
@@ -456,7 +456,7 @@ func (f *File) InvokeMethod(method string, args ...Object) Object {
 
 		return &Null{}
 	case "read":
-		content, err := ioutil.ReadAll(f.File)
+		content, err := io.ReadAll(f.File)
 
 		if err != nil {
 			return &Error{Message: fmt.Sprintf("Could not read file: %s", f.File.Name())}
@@ -480,7 +480,7 @@ func (f *File) InvokeMethod(method string, args ...Object) Object {
 
 		return &Null{}
 	case "readlines":
-		content, err := ioutil.ReadAll(f.File)
+		content, err := io.ReadAll(f.File)
 		if err != nil {
 			return &Error{Message: fmt.Sprintf("Could not read file: %s", f.File.Name())}
 		}
