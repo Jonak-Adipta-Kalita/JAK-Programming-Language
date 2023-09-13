@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 
 	"github.com/Jonak-Adipta-Kalita/JAK-Programming-Language/evaluator"
@@ -20,7 +19,7 @@ func main() {
 		filePath := os.Args[1]
 		file.SetMainFileName(filePath)
 		file.SetFileName(filePath)
-		contents, err := ioutil.ReadFile(filePath)
+		contents, err := os.ReadFile(filePath)
 
 		if err != nil {
 			fmt.Printf("Failure to read file '%s'. Err: %s", string(contents), err)
